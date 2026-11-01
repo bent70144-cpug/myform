@@ -67,6 +67,60 @@ describe("create_personal_workspace", () => {
     });
   });
 
+  // Regression (migration 0007): two concurrent bootstrap requests for the
+  // same user used to hit `workspaces_personal_creator_uq` (0006 arbitrated
+  // with check-then-INSERT). The partial unique index is now the arbiter:
+  // both callers must succeed with the SAME workspace id, and exactly one
+  // membership / General project / audit row / outbox event may exist.
+  it("coalesces concurrent bootstrap requests for the same user", async () => {
+    const userId = newId();
+
+    const [ws1, ws2] = await Promise.all([
+      bootstrapPersonalWorkspace(userId),
+      bootstrapPersonalWorkspace(userId),
+    ]);
+    expect(ws1).toBe(ws2);
+
+    // Exactly one personal workspace, owner-shaped (the sanctioned read path;
+    // app_user has no direct grants on workspaces/workspace_members).
+    const listed = await withUserContext(userId, (client) =>
+      client.query<{ id: string; name: string; role: string }>(
+        "SELECT id::text AS id, name, role::text AS role FROM app.list_workspaces()",
+      ),
+    );
+    expect(listed.rows).toEqual([
+      { id: ws1, name: "Personal Workspace", role: "owner" },
+    ]);
+
+    // The winner path ran exactly once: membership/project/audit/outbox all
+    // count 1 from inside the tenant context (same pattern as the audit test
+    // below — workspace_members itself has no direct app_user grant, so the
+    // single audit/outbox rows are the witness for the single execution).
+    await withTenant(userId, ws1, async (tx) => {
+      const projects = await tx.query<{ count: string }>(
+        "SELECT count(*)::text AS count FROM app.projects WHERE is_default AND deleted_at IS NULL",
+      );
+      expect(projects.rows[0]!.count).toBe("1");
+
+      const audit = await tx.query<{ count: string }>(
+        "SELECT count(*)::text AS count FROM app.audit_logs WHERE action = 'workspace.created'",
+      );
+      expect(audit.rows[0]!.count).toBe("1");
+    });
+
+    // Outbox is read by the worker role (app_user has no SELECT grant).
+    const worker = await connectAs("worker_user");
+    try {
+      const outbox = await worker.query<{ count: string }>(
+        "SELECT count(*)::text AS count FROM app.outbox_events o WHERE o.event_type = 'workspace.created' AND o.payload->>'workspaceId' = $1",
+        [ws1],
+      );
+      expect(outbox.rows[0]!.count).toBe("1");
+    } finally {
+      await worker.end();
+    }
+  });
+
   it("writes the workspace.created audit row and outbox event after the first bootstrap", async () => {
     const userId = newId();
     const ws = await bootstrapPersonalWorkspace(userId);
