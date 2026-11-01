@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Build scripts pnpm is allowed to run (pnpm 12 reads this, not package.json).
+# @embedded-postgres/linux-x64 MUST hydrate its Postgres binaries or nothing boots.
+onlyBuiltDependencies:
+  - "@embedded-postgres/linux-x64"
+  - embedded-postgres
+  - esbuild
+  - "@swc/core"
+  - sharp
+  - unrs-resolver
+  - workerd

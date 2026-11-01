@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+.next/
+out/
+*.tsbuildinfo
+
+# local runtime state (dev-env data dirs, pids, logs)
+.local/
+*.log
+
+# env files (never commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# tooling caches
+.turbo/
+coverage/
+.eslintcache
+.vitest/
+
+# downloaded tool binaries (fetched by scripts/dev-env.mjs on first run)
+tools/
+mailpit*
