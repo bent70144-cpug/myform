@@ -9,7 +9,7 @@ import {
 } from "../src";
 import { UnknownSchemaVersionError } from "../src/migrate";
 
-function questionBlock(overrides: Partial<Block> = {}): Block {
+function questionBlock(overrides: Partial<Extract<Block, { kind: "short_text" }>> = {}): Block {
   return { id: "q_short_text1", kind: "short_text", label: "Name", required: true, ...overrides };
 }
 
