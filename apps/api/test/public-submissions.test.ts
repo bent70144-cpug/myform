@@ -80,7 +80,7 @@ const Q_STORY = "b00000000003";
 const Q_ENDING = "b00000000004";
 
 function envelope(): FormSchema {
-  [Q_WELCOME, Q_NAME, Q_STORY, Q_ENDING].forEach((id, i) =>
+  [Q_WELCOME, Q_NAME, Q_STORY, Q_ENDING].forEach((id) =>
     expect(id).toMatch(BLOCK_ID_RE),
   );
   void Q_ENDING;

@@ -15,7 +15,6 @@ import {
 } from "@form/contracts";
 import { isUuid } from "@form/database";
 import {
-  CurrentSession,
   EmailVerifiedGuard,
   RequireVerifiedEmail,
 } from "../auth/email-verified.guard";

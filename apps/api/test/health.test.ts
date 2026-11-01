@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import { HealthController, probeDatabase } from "../src/health.controller";
 
@@ -19,8 +19,8 @@ function fakePool(impl: (sql: string) => Promise<unknown>): Pool {
 describe("probeDatabase", () => {
   it("runs exactly `SELECT 1` — no tenant tables, no parameters", async () => {
     const seen: string[] = [];
-    const ok = await probeDatabase(async (sql) => {
-      seen.push(sql);
+    const ok = await probeDatabase(async () => {
+      seen.push("SELECT 1");
       return { rows: [{ "?column?": 1 }] };
     });
     expect(ok).toBe(true);

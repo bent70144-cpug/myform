@@ -183,18 +183,16 @@ export function devDefaults(env = process.env) {
     pgUser,
     pgPassword,
     devDb,
-    adminDatabaseUrl:
-      env.ADMIN_DATABASE_URL ??
-      `postgres://${pgUser}:${pgPassword}@localhost:${pgPort}/${devDb}`,
-    migratorDatabaseUrl:
-      env.MIGRATOR_DATABASE_URL ??
-      `postgres://migrator:${migratorPassword}@localhost:${pgPort}/${devDb}`,
-    appDatabaseUrl:
-      env.DATABASE_URL ??
-      `postgres://app_user:${appUserPassword}@localhost:${pgPort}/${devDb}`,
-    workerDatabaseUrl:
-      env.WORKER_DATABASE_URL ??
-      `postgres://worker_user:${workerPassword}@localhost:${pgPort}/${devDb}`,
+    // Dev URLs are ALWAYS computed from the explicit PG_* knobs above — the
+    // ambient environment is deliberately NOT consulted for *_DATABASE_URL.
+    // Inherited values (CI sandboxes, dotfiles, other projects' .env) would
+    // silently point children at a foreign database and fail with confusing
+    // ECONNREFUSED/permission errors. Point dev at a custom Postgres by
+    // setting PG_PORT / PG_USER / PG_PASSWORD / DEV_DB_NAME instead.
+    adminDatabaseUrl: `postgres://${pgUser}:${pgPassword}@localhost:${pgPort}/${devDb}`,
+    migratorDatabaseUrl: `postgres://migrator:${migratorPassword}@localhost:${pgPort}/${devDb}`,
+    appDatabaseUrl: `postgres://app_user:${appUserPassword}@localhost:${pgPort}/${devDb}`,
+    workerDatabaseUrl: `postgres://worker_user:${workerPassword}@localhost:${pgPort}/${devDb}`,
     migratorPassword,
     appUserPassword,
     workerPassword,
@@ -260,7 +258,7 @@ async function dev() {
     spawnChild(
       "pg",
       process.execPath,
-      [path.join(ROOT, "node_modules/.bin/tsx"), "packages/database/src/scripts/start-embedded.ts"],
+      [path.join(ROOT, "node_modules/tsx/dist/cli.mjs"), "packages/database/src/scripts/start-embedded.ts"],
       ROOT,
       { ...process.env },
     );
@@ -312,6 +310,30 @@ async function dev() {
       `[pgboss-install] failed (exit ${pgbossInstall.status})\n${pgbossInstall.stderr ?? ""}\n`,
     );
     process.exit(pgbossInstall.status ?? 1);
+  }
+
+  // 3.6 Better Auth DDL for the `auth` schema + app_user grants (dev/e2e
+  //     companion of the api test fixture; production: a migrator step —
+  //     see the ticket-12 runbook pending-user checklist).
+  const authSchema = spawnSync(
+    "pnpm",
+    ["--filter", "@form/api", "exec", "tsx", "src/scripts/ensure-auth-schema.ts"],
+    {
+      cwd: ROOT,
+      env: {
+        ...process.env,
+        ADMIN_DATABASE_URL: d.adminDatabaseUrl,
+        APP_DATABASE_URL: d.appDatabaseUrl,
+      },
+      stdio: ["ignore", "pipe", "pipe"],
+      encoding: "utf8",
+    },
+  );
+  if (authSchema.status !== 0) {
+    process.stderr.write(
+      `[auth-schema] failed (exit ${authSchema.status})\n${authSchema.stderr ?? ""}\n`,
+    );
+    process.exit(authSchema.status ?? 1);
   }
 
   // 4. Dev SMTP sink (Mailpit substitute).
