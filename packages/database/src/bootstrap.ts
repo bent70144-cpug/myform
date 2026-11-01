@@ -142,7 +142,12 @@ export async function bootstrapDatabase(
     // role so the schema statements below work on managed Postgres (Neon).
     for (const role of ROLES) {
       if (!role.login) continue;
-      await admin.query(`GRANT ${ident(role.name)} TO current_user WITH SET TRUE`);
+      // INHERIT too: the follow-up auth-DDL step (ensure-auth-tables) creates
+      // tables in the `auth` schema, which is OWNED BY `migrator` — a
+      // non-inheriting membership would not carry that CREATE privilege.
+      await admin.query(
+        `GRANT ${ident(role.name)} TO current_user WITH INHERIT TRUE, SET TRUE`,
+      );
     }
 
     for (const schema of SCHEMAS) {

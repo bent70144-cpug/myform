@@ -76,6 +76,23 @@ jobs:
         env:
           MIGRATOR_DATABASE_URL: ${{ secrets.MIGRATOR_DATABASE_URL }}
 
+      # The `auth` schema (Better Auth generated DDL) and the `pgboss` schema
+      # are NOT owned by SQL migrations (ADR 0003): the request path's schema
+      # is Better Auth's own migration runner, pg-boss's is its installer.
+      # Both are idempotent and run right after the SQL migrations, as the
+      # admin. Their secrets are Actions-only (never Render, never the repo).
+      - name: Apply auth-schema DDL (Better Auth)
+        run: pnpm --filter @form/api exec tsx src/scripts/ensure-auth-tables.ts
+        env:
+          ADMIN_DATABASE_URL: ${{ secrets.ADMIN_DATABASE_URL }}
+
+      - name: Install pgboss schema + worker_user grants
+        run: pnpm --filter @form/worker exec tsx src/install-pgboss.ts
+        env:
+          ADMIN_DATABASE_URL: ${{ secrets.ADMIN_DATABASE_URL }}
+          MIGRATOR_DATABASE_URL: ${{ secrets.MIGRATOR_DATABASE_URL }}
+          WORKER_PASSWORD: ${{ secrets.WORKER_PASSWORD }}
+
   deploy:
     name: Trigger Render deploy (API)
     if: github.ref == 'refs/heads/main'
