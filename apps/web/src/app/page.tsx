@@ -29,7 +29,7 @@ const primaryButtonStyle: React.CSSProperties = {
   color: "#fff",
   fontSize: "0.95rem",
   fontWeight: 600,
-  ...linkStyle,
+  textDecoration: "none",
 };
 
 const secondaryButtonStyle: React.CSSProperties = {
@@ -139,7 +139,7 @@ export default function Home() {
             <div
               key={feature.title}
               style={{
-                flex: "1 1 240px",
+                flex: "1 1 300px",
                 border: `1px solid ${BORDER}`,
                 borderRadius: "0.5rem",
                 padding: "1.5rem",
