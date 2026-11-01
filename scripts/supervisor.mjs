@@ -464,6 +464,18 @@ async function serve(noWeb = false) {
       : `[supervisor] serving: web :${webPort} → api 127.0.0.1:${apiPort} (same allowlists as dev)\n`,
   );
 
+  // The alpha runbook moves real email to Resend (domain verification pending),
+  // but the Render service env currently ships EMAIL_PROVIDER=mail_sink — and
+  // sign-up AWAITS the verification send. Spawn the dev sink in serve mode too
+  // whenever the env selects it, so SMTP sends succeed on the deployment
+  // instead of failing every sign-up. When the env switches to
+  // EMAIL_PROVIDER=resend, no sink is spawned (the documented production path).
+  if ((env.EMAIL_PROVIDER ?? "") === "mail_sink") {
+    spawnChild("mail", process.execPath, [path.join(ROOT, "scripts/mail-sink.mjs")], ROOT, {
+      ...buildChildEnv("sink", { ...env, NODE_ENV: "production" }),
+    });
+  }
+
   spawnChild("api", "pnpm", ["--filter", "@form/api", "start"], ROOT, {
     ...buildChildEnv("api", {
       ...env,
