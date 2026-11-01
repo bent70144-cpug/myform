@@ -1,0 +1,32 @@
+{
+  "name": "@myform/db",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Database seam: admin bootstrap, migrator (incl. pg-boss DDL), transaction wrapper, test helper",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "bootstrap": "node dist/cli.js bootstrap",
+    "migrate": "node dist/cli.js migrate"
+  },
+  "dependencies": {
+    "pg": "8.23.1",
+    "pg-boss": "12.38.0"
+  },
+  "devDependencies": {
+    "@embedded-postgres/linux-x64": "18.6.0-beta.19",
+    "@eslint/js": "10.0.1",
+    "@myform/config": "workspace:*",
+    "@types/node": "26.6.6",
+    "@types/pg": "8.23.1",
+    "embedded-postgres": "18.6.0-beta.19",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}
