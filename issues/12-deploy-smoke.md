@@ -8,9 +8,9 @@
 
 **Status:** done
 
-- [ ] The one-time admin bootstrap script has run on Neon and created the schemas and the `migrator`, `app_user`, `worker_user`, and NOLOGIN `fn_owner` roles. No role password appears in a migration file, and the migrator password is absent from Render's runtime environment.
-- [ ] GitHub Actions ran the migrations as `migrator` before triggering the Render deploy; Render auto-deploy on push is disabled, and the migrator URL exists only as a GitHub Actions secret, not in Render's runtime environment. The app connects as `app_user`, the worker as `worker_user`, and security-definer functions are owned by `fn_owner`.
-- [ ] The HTTPS email adapter wired in ticket 03 works; verification and password reset succeed without Mailpit. The provider sandbox may deliver only to the owner's address during development.
+- [x] The one-time admin bootstrap script has run on Neon and created the schemas and the `migrator`, `app_user`, `worker_user`, and NOLOGIN `fn_owner` roles. No role password appears in a migration file, and the migrator password is absent from Render's runtime environment.
+- [x] GitHub Actions ran the migrations as `migrator` before triggering the Render deploy; Render auto-deploy on push is disabled, and the migrator URL exists only as a GitHub Actions secret, not in Render's runtime environment. The app connects as `app_user`, the worker as `worker_user`, and security-definer functions are owned by `fn_owner`.
+- [x] The HTTPS email adapter wired in ticket 03 works; verification and password reset succeed without Mailpit. The provider sandbox may deliver only to the owner's address during development.
 - [ ] Before the first outside tester, a sending domain is owned and verified with the email provider (roughly $10/year; confirm current pricing); `onrender.com` cannot be verified as a sender domain.
 - [ ] A live signup → create form → publish → submit → review run completes on the alpha.
 - [ ] Cold-start behavior is measured, including the authenticated SSR session hop.
