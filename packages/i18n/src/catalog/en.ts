@@ -23,6 +23,43 @@ export const en = {
     subtitle:
       "A hosted workspace for conversational forms — one client's data never sees another's.",
     openDashboard: "Open dashboard",
+    // Landing page (public home). Static server component — no session call,
+    // no API dependency; the one page that must render even if the API is down.
+    badge: "Alpha",
+    getStarted: "Get started",
+    signInLink: "Sign in",
+    heroHint:
+      "Create an account, verify your email and publish your first form in minutes.",
+    featuresHeading: "Everything a small practice needs",
+    features: {
+      builderTitle: "Build forms block by block",
+      builderBody:
+        "Compose welcome, question and ending blocks, reorder them freely, and drafts save every change as you go.",
+      publishTitle: "Publish with one link",
+      publishBody:
+        "Share a public page for each form. Publish, close and republish without ever losing your draft.",
+      inboxTitle: "Review every submission",
+      inboxBody:
+        "Responses land in each form's inbox together with the exact form version they answered.",
+      privacyTitle: "Isolated by design",
+      privacyBody:
+        "Every account gets its own workspace, and database-level rules keep one client's data from ever touching another's.",
+    },
+    howHeading: "How it works",
+    how: {
+      step1Title: "Create your form",
+      step1Body:
+        "Sign up, verify your email, then add and order blocks in the visual builder.",
+      step2Title: "Share the link",
+      step2Body:
+        "Publish the form to get a public page you can send to clients or open on any device.",
+      step3Title: "Collect answers",
+      step3Body:
+        "Submissions arrive in your inbox, validated field by field before they are accepted.",
+    },
+    ctaHeading: "Ready to collect better intake?",
+    ctaBody: "Set up your workspace and publish your first form today.",
+    footerNote: "Structured client intake for small teams.",
   },
   dashboard: {
     title: "Dashboard",
