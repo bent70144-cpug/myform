@@ -1,10 +1,27 @@
+import type { CSSProperties } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { t } from "@form/i18n";
 import { getServerSession } from "../../lib/session";
 import { listForms } from "../../lib/forms";
 import { formatReceivedAt } from "../../lib/submissions";
-import { Alert, AppNav, C, EmptyState, h1, h2, link, muted, page, small, stack } from "../../lib/ui";
+import {
+  Alert,
+  AppNav,
+  Badge,
+  C,
+  EmptyState,
+  btn,
+  card,
+  h1,
+  h2,
+  link,
+  muted,
+  page,
+  row,
+  small,
+  stack,
+} from "../../lib/ui";
 import SignOutButton from "./SignOutButton";
 import BootstrapWorkspace from "./BootstrapWorkspace";
 import NewFormButton from "./NewFormButton";
@@ -29,11 +46,15 @@ import ResendVerificationForm from "../verify-email/ResendVerificationForm";
  * small client bootstrap stepper. The server component itself never
  * triggers bootstrap (read-only session GET).
  *
- * Ticket 06: with a workspace present the shell lists the active
- * workspace's forms (labels from `forms.name`) with a client-side
- * "New form" button and inline rename; each row links to the form page
- * shell at /dashboard/forms/{id}. The list GET runs server-side on the
- * internal API (read-only); all mutations run in the browser.
+ * Ticket 06 / v2: with a workspace present the shell shows the workspace
+ * header card (name + role badge), the "Forms" heading row with the
+ * client-side "New form" trigger, and THREE explicit list states — a failed
+ * list read (error alert + retry link, a plain server-rendered anchor), an
+ * empty workspace (empty state), or one card row per form with the dashboard
+ * label, its created date, and the inline rename control. Each row links to
+ * the form page shell at /dashboard/forms/{id}. The list GET runs
+ * server-side on the internal API (read-only); all mutations run in the
+ * browser.
  */
 export default async function DashboardPage() {
   const session = await getServerSession();
@@ -69,19 +90,57 @@ export default async function DashboardPage() {
 }
 
 /**
+ * One form row: the same borderRadius-10 card look as before (white surface,
+ * hairline border), laid out as a flex row that wraps on narrow screens so
+ * the rename control drops below the label instead of overflowing.
+ */
+const formRowCard: CSSProperties = {
+  background: C.white,
+  border: `1px solid ${C.border}`,
+  borderRadius: "10px",
+  padding: "0.8rem 1rem",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexWrap: "wrap",
+  gap: "0.6rem",
+};
+
+/**
  * The form list (server component). The list GET runs server-side on the
- * internal API; a failed read renders the empty state rather than crashing
- * the shell.
+ * internal API; a failed read (non-200 or contract drift → null) is now its
+ * OWN state — an error alert with a retry link — rather than being silently
+ * conflated with "no forms yet". A retry is a plain full-page navigation
+ * back to /dashboard, which re-runs the no-store server read; no client
+ * handler, no mutation from a server component.
  */
 async function FormsSection(props: {
   workspaceName: string;
   workspaceRole: string;
 }) {
   const pageData = await listForms();
-  const forms = pageData?.forms ?? [];
 
   return (
     <section style={{ ...stack("0.9rem"), marginTop: "1.5rem" }}>
+      <div style={card}>
+        <div style={{ ...row, justifyContent: "space-between" }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={small}>{t("dashboard.workspace.label")}</div>
+            <div
+              style={{
+                fontWeight: 600,
+                color: C.ink,
+                marginTop: "0.15rem",
+                overflowWrap: "anywhere",
+              }}
+            >
+              {props.workspaceName}
+            </div>
+          </div>
+          <Badge kind="neutral">{props.workspaceRole}</Badge>
+        </div>
+      </div>
+
       <div
         style={{
           display: "flex",
@@ -94,12 +153,17 @@ async function FormsSection(props: {
         <h2 style={{ ...h2, margin: 0 }}>{t("dashboard.forms.title")}</h2>
         <NewFormButton />
       </div>
-      <p style={small}>
-        <strong>{t("dashboard.workspace.label")}:</strong> {props.workspaceName}{" "}
-        <span style={{ color: C.muted }}>({props.workspaceRole})</span>
-      </p>
 
-      {forms.length === 0 ? (
+      {pageData === null ? (
+        <Alert kind="error">
+          <div style={row}>
+            <span>{t("dashboard.forms.loadFailed")}</span>
+            <a href="/dashboard" style={btn("secondary", { small: true })}>
+              {t("dashboard.bootstrap.retry")}
+            </a>
+          </div>
+        </Alert>
+      ) : pageData.forms.length === 0 ? (
         <EmptyState>{t("dashboard.forms.empty")}</EmptyState>
       ) : (
         <ul
@@ -112,21 +176,8 @@ async function FormsSection(props: {
             gap: "0.6rem",
           }}
         >
-          {forms.map((form) => (
-            <li
-              key={form.id}
-              style={{
-                background: C.white,
-                border: `1px solid ${C.border}`,
-                borderRadius: "10px",
-                padding: "0.8rem 1rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-                gap: "0.6rem",
-              }}
-            >
+          {pageData.forms.map((form) => (
+            <li key={form.id} style={formRowCard}>
               <div style={{ minWidth: 0 }}>
                 <Link
                   href={`/dashboard/forms/${form.id}`}

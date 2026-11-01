@@ -7,7 +7,6 @@ import { getForm } from "../../../../lib/forms";
 import { resolveAppOrigin } from "../../../../lib/app-origin";
 import {
   AppNav,
-  backLink,
   btn,
   card,
   h1,
@@ -68,10 +67,6 @@ export default async function FormPage(props: {
     <>
       <AppNav />
       <main style={page}>
-        <Link href="/dashboard" style={backLink}>
-          {t("dashboard.forms.backToDashboard")}
-        </Link>
-
         <section style={{ ...card, marginBottom: "1rem" }}>
           <div
             style={{
@@ -106,6 +101,8 @@ export default async function FormPage(props: {
         <div style={{ ...stack("0.75rem"), marginTop: "1rem" }}>
           <BuilderClient
             formId={form.id}
+            name={form.name}
+            status={form.status}
             initialSchema={form.draft.schema}
             initialDraftVersion={form.draft.draftVersion}
           />

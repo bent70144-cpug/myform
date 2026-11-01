@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { t } from "@form/i18n";
@@ -17,14 +18,45 @@ import {
 } from "../../../../../../lib/ui";
 
 /**
- * Submission DETAIL (ticket 11) — each stored answer rendered BESIDE its
- * question label, with the received time and the form version badge.
+ * Visually hidden (screen-reader-only) text — the standard absolute+clip
+ * pattern. Used for the Question/Answer caption row inside each pair card
+ * so the pairing stays self-describing without visual clutter.
+ */
+const srOnly: CSSProperties = {
+  position: "absolute",
+  width: "1px",
+  height: "1px",
+  padding: 0,
+  margin: "-1px",
+  overflow: "hidden",
+  clip: "rect(0, 0, 0, 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
+/** The question term inside a pair card (heading-like). */
+const term: CSSProperties = {
+  fontWeight: 600,
+  overflowWrap: "anywhere",
+};
+
+/**
+ * Submission DETAIL (ticket 11, polished) — each stored answer rendered
+ * BESIDE its question label, with the received time and the form version
+ * badge in a wrapping meta row.
  *
  * The pairing was computed by the API from the PINNED version's schema (the
  * version the respondent actually saw — never the mutable draft); this page
- * renders the pairs in the order the pinned schema ordered them. Labels and
- * answers arrive as plain text and render as ESCAPED plain text (React text
- * nodes — no dangerouslySetInnerHTML anywhere in the inbox).
+ * renders the pairs in the order the pinned schema ordered them. Each pair
+ * is a card: the question as the dt term (italic+muted when the label is
+ * gone from the pinned schema — "Unknown question"), and the answer in a
+ * soft inset panel (`softCard`, pre-wrap so line breaks survive).
+ * Screen-reader-only Question/Answer captions (i18n
+ * `dashboard.inbox.questionHeading` / `dashboard.inbox.answerHeading`) keep
+ * every card self-describing while the UI stays calm.
+ *
+ * Labels and answers arrive as plain text and render as ESCAPED plain text
+ * (React text nodes — no dangerouslySetInnerHTML anywhere in the inbox).
  *
  * 404s stay indistinguishable: an unknown submission, one belonging to
  * another form, or one of another workspace all render Next's not-found page
@@ -95,20 +127,29 @@ export default async function SubmissionDetailPage(props: {
                 margin: 0,
               }}
             >
-              <dt style={{ fontWeight: 600 }}>
+              <span style={srOnly}>
+                {t("dashboard.inbox.questionHeading")}
+              </span>
+              <dt
+                style={
+                  pair.label !== null
+                    ? term
+                    : { ...term, fontStyle: "italic", color: C.muted }
+                }
+              >
                 {pair.label !== null
                   ? pair.label
                   : t("dashboard.inbox.unknownQuestion")}
               </dt>
+              <span style={srOnly}>{t("dashboard.inbox.answerHeading")}</span>
               <dd
                 style={{
                   ...softCard,
-                  margin: "0.5rem 0 0",
-                  whiteSpace: "pre-wrap",
+                  margin: "0.6rem 0 0",
                   padding: "0.6rem 0.75rem",
-                  borderRadius: "8px",
                   color: C.ink,
-                  border: `1px solid ${C.border}`,
+                  whiteSpace: "pre-wrap",
+                  overflowWrap: "anywhere",
                 }}
                 data-testid="inbox-answer"
               >

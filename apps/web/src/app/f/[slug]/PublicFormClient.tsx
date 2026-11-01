@@ -25,7 +25,15 @@ import {
   welcomeBlock,
   type PublicFormPhase,
 } from "./public-form-machine";
-import { alertStyle, btn, C, input } from "../../../lib/ui-tokens";
+import {
+  alertStyle,
+  btn,
+  C,
+  DURATION,
+  EASE,
+  input,
+  shadow,
+} from "../../../lib/ui-tokens";
 
 /**
  * The INTERACTIVE public form (ticket 10) — makes T09's read-only /f/[slug]
@@ -41,6 +49,9 @@ import { alertStyle, btn, C, input } from "../../../lib/ui-tokens";
  *   against the pinned schema and its stable codes drive the field errors;
  * - a receipt swaps the form for the ending block; closed/expired failures
  *   show the closed / restart messages instead.
+ *
+ * M0 keeps ALL questions on ONE page (no fake one-question-per-screen): a
+ * slim progress module above the questions reports how many are answered.
  *
  * 360px safety: the container and every input are fluid (`width: 100%`,
  * `box-sizing: border-box`), stacked in a single column — no fixed widths
@@ -66,13 +77,15 @@ const containerStyle = {
   border: `1px solid ${C.border}`,
   borderRadius: "12px",
   padding: "24px",
+  boxShadow: shadow.sm,
   boxSizing: "border-box" as const,
 };
 
 const titleStyle = {
   fontSize: "1.5rem",
   lineHeight: 1.25,
-  margin: "0 0 16px",
+  letterSpacing: "-0.01em",
+  margin: "0 0 20px",
 };
 
 const errorStyle = {
@@ -90,17 +103,65 @@ const stackStyle = {
 
 const sectionStyle = {
   borderTop: `1px solid ${C.border}`,
-  paddingTop: 16,
+  paddingTop: 20,
 };
 
 const labelStyle = {
   display: "block",
   fontWeight: 600,
-  marginBottom: 4,
+  marginBottom: 6,
 };
 
 const markStyle = {
   fontWeight: 400,
+  fontSize: 13,
+  color: C.muted,
+};
+
+const questionDescriptionStyle = {
+  margin: "0 0 8px",
+  color: C.muted,
+};
+
+/** Welcome section: hairline divider under the page title (matches T09 view). */
+const welcomeSectionStyle = {
+  borderTop: `1px solid ${C.border}`,
+  paddingTop: 16,
+};
+
+const headingStyle = {
+  margin: "0 0 6px",
+  fontSize: "1.15rem",
+};
+
+/**
+ * Progress module — pure inline styles, fluid end to end: a thin track
+ * (4px, pill-shaped, full width) with an ink fill whose width is the
+ * answered percentage, plus a muted caption underneath. The percent string
+ * is a layout value, not an input width, so 360px safety is untouched.
+ */
+const progressModuleStyle = {
+  width: "100%",
+};
+
+const progressTrackStyle = {
+  height: 4,
+  width: "100%",
+  borderRadius: 999,
+  background: C.border,
+  overflow: "hidden" as const,
+};
+
+const progressFillStyle = (percent: number) => ({
+  height: "100%",
+  width: `${percent}%`,
+  borderRadius: 999,
+  background: C.ink,
+  transition: `width ${DURATION.base} ${EASE}`,
+});
+
+const progressCaptionStyle = {
+  margin: "6px 0 0",
   fontSize: 13,
   color: C.muted,
 };
@@ -225,13 +286,21 @@ export default function PublicFormClient(props: { slug: string; schema: FormDraf
       b.kind === "short_text" || b.kind === "long_text",
   );
 
+  // Progress accounting for the module above the questions. Whitespace-only
+  // answers do not count, mirroring blankRequiredBlocks' rule. Guarded by the
+  // total > 0 check at the render site, so the division is always safe.
+  const totalQuestions = questionBlocks.length;
+  const answeredQuestions = questionBlocks.filter(
+    (b) => (answers[b.id] ?? "").trim().length > 0,
+  ).length;
+
   return (
     <main style={pageStyle}>
       <div style={containerStyle}>
         <h1 style={titleStyle}>{title}</h1>
         {phase === "ended" ? (
-          <section data-testid="public-form-ended" style={{ textAlign: "center", padding: "1rem 0" }}>
-            <h2 style={{ margin: "0 0 6px", fontSize: "1.15rem" }}>
+          <section data-testid="public-form-ended" style={{ textAlign: "center", padding: "1.5rem 0" }}>
+            <h2 style={{ margin: "0 0 6px", fontSize: "1.5rem", lineHeight: 1.25 }}>
               {ending !== null && ending.title.trim() !== "" ? ending.title : t("public.form.endingTitleFallback")}
             </h2>
             {ending?.description !== undefined ? (
@@ -260,8 +329,8 @@ export default function PublicFormClient(props: { slug: string; schema: FormDraf
         ) : (
           <form onSubmit={(event) => void onSubmit(event)} style={stackStyle} noValidate>
             {welcome !== null ? (
-              <section style={{ marginBottom: 4 }}>
-                <h2 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{welcome.title}</h2>
+              <section style={welcomeSectionStyle}>
+                <h2 style={headingStyle}>{welcome.title}</h2>
                 {welcome.description !== undefined ? (
                   <p style={{ margin: 0, color: C.muted }}>{welcome.description}</p>
                 ) : null}
@@ -280,6 +349,31 @@ export default function PublicFormClient(props: { slug: string; schema: FormDraf
               </p>
             ) : null}
 
+            {totalQuestions > 0 ? (
+              <div style={progressModuleStyle}>
+                <div
+                  role="progressbar"
+                  aria-label={t("public.form.progressLabel")}
+                  aria-valuemin={0}
+                  aria-valuemax={totalQuestions}
+                  aria-valuenow={answeredQuestions}
+                  style={progressTrackStyle}
+                >
+                  <div
+                    style={progressFillStyle(
+                      Math.round((answeredQuestions / totalQuestions) * 100),
+                    )}
+                  />
+                </div>
+                <p style={progressCaptionStyle}>
+                  {t("public.form.answeredOf", {
+                    answered: answeredQuestions,
+                    total: totalQuestions,
+                  })}
+                </p>
+              </div>
+            ) : null}
+
             {questionBlocks.map((block) => {
               const mark = block.required
                 ? t("public.form.requiredMark")
@@ -294,7 +388,7 @@ export default function PublicFormClient(props: { slug: string; schema: FormDraf
                     <span style={markStyle}> ({mark})</span>
                   </label>
                   {block.description !== undefined ? (
-                    <p style={{ margin: "0 0 6px", color: C.muted }}>{block.description}</p>
+                    <p style={questionDescriptionStyle}>{block.description}</p>
                   ) : null}
                   {block.kind === "long_text" ? (
                     <textarea

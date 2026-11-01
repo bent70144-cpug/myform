@@ -8,7 +8,7 @@
 import * as React from "react";
 import type { FormBlock } from "@form/contracts";
 import { t } from "@form/i18n";
-import { C, input, softCard } from "../../../lib/ui-tokens";
+import { C, input, shadow, softCard } from "../../../lib/ui-tokens";
 
 /**
  * Read-only public form view (ticket 09) — a presentational component with NO
@@ -24,6 +24,10 @@ import { C, input, softCard } from "../../../lib/ui-tokens";
  * - 360px-safe: the container is fluid (`width: 100%`, `max-width`), every
  *   input is `width: 100%` + `box-sizing: border-box` — no horizontal
  *   scrolling at narrow widths.
+ *
+ * M0 renders every block on ONE page: the card is a calm, single column —
+ * hairline dividers between block sections, generous spacing around
+ * questions, nothing fixed-width.
  */
 
 /** Page wrapper: soft backdrop, centered single column. */
@@ -46,30 +50,55 @@ const containerStyle = {
   border: `1px solid ${C.border}`,
   borderRadius: "12px",
   padding: "24px",
+  boxShadow: shadow.sm,
   boxSizing: "border-box" as const,
 };
 
 const titleStyle = {
   fontSize: "1.5rem",
   lineHeight: 1.25,
-  margin: "0 0 16px",
+  letterSpacing: "-0.01em",
+  margin: "0 0 20px",
 };
 
-const sectionStyle = {
-  marginBottom: 16,
+/** The hairline rule every block section hangs under. */
+const hairlineStyle = {
   borderTop: `1px solid ${C.border}`,
+};
+
+/** Welcome/ending narrative sections: hairline divider + moderate spacing. */
+const narrativeStyle = {
+  ...hairlineStyle,
   paddingTop: 16,
+  marginBottom: 24,
+};
+
+/** Question sections: hairline divider + generous breathing room. */
+const questionSectionStyle = {
+  ...hairlineStyle,
+  paddingTop: 20,
+  marginBottom: 28,
+};
+
+const headingStyle = {
+  margin: "0 0 6px",
+  fontSize: "1.15rem",
 };
 
 const labelStyle = {
   display: "block",
   fontWeight: 600,
-  marginBottom: 4,
+  marginBottom: 6,
 };
 
 const markStyle = {
   fontWeight: 400,
   fontSize: 13,
+  color: C.muted,
+};
+
+const questionDescriptionStyle = {
+  margin: "0 0 8px",
   color: C.muted,
 };
 
@@ -85,19 +114,13 @@ export default function PublicFormView(props: {
         </h1>
         {props.blocks.map((block) => {
           switch (block.kind) {
+            // Welcome and ending are the same narrative shape: heading +
+            // optional description, each opening with a hairline divider.
             case "welcome":
-              return (
-                <section key={block.id} style={{ marginBottom: 16 }}>
-                  <h2 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{block.title}</h2>
-                  {block.description !== undefined ? (
-                    <p style={{ margin: 0, color: C.muted }}>{block.description}</p>
-                  ) : null}
-                </section>
-              );
             case "ending":
               return (
-                <section key={block.id} style={{ marginBottom: 16 }}>
-                  <h2 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{block.title}</h2>
+                <section key={block.id} style={narrativeStyle}>
+                  <h2 style={headingStyle}>{block.title}</h2>
                   {block.description !== undefined ? (
                     <p style={{ margin: 0, color: C.muted }}>{block.description}</p>
                   ) : null}
@@ -110,13 +133,13 @@ export default function PublicFormView(props: {
                 : t("public.form.optionalMark");
               const fieldId = `f-${block.id}`;
               return (
-                <section key={block.id} style={sectionStyle}>
+                <section key={block.id} style={questionSectionStyle}>
                   <label htmlFor={fieldId} style={labelStyle}>
                     {block.label}{" "}
                     <span style={markStyle}> ({mark})</span>
                   </label>
                   {block.description !== undefined ? (
-                    <p style={{ margin: "0 0 6px", color: C.muted }}>{block.description}</p>
+                    <p style={questionDescriptionStyle}>{block.description}</p>
                   ) : null}
                   {block.kind === "long_text" ? (
                     <textarea

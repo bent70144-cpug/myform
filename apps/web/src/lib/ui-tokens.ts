@@ -31,10 +31,18 @@ export const C = {
   warningBorder: "#eedfb2",
   info: "#1f2937",
   infoBg: "#f9fafb",
+  /** Fixed-overlay backdrop: translucent ink (modals, drawers, sheets). */
+  overlay: "rgba(31, 41, 55, 0.45)",
 } as const;
 
 const RADIUS = "10px";
-const SHADOW = "0 1px 2px rgba(15, 23, 42, 0.05)";
+
+/** Elevation levels. `sm` is the original card shadow, unchanged. */
+export const shadow = {
+  sm: "0 1px 2px rgba(15, 23, 42, 0.05)",
+  md: "0 4px 12px rgba(15, 23, 42, 0.1)",
+  lg: "0 16px 40px rgba(15, 23, 42, 0.18)",
+} as const;
 
 /** Fluid page container (dashboard-style pages). */
 export const page: CSSProperties = {
@@ -55,7 +63,7 @@ export const card: CSSProperties = {
   background: C.white,
   border: `1px solid ${C.border}`,
   borderRadius: RADIUS,
-  boxShadow: SHADOW,
+  boxShadow: shadow.sm,
   padding: "1.25rem",
   boxSizing: "border-box",
 };
@@ -174,6 +182,36 @@ export const row: CSSProperties = {
 export function stack(gap = "1rem"): CSSProperties {
   return { display: "flex", flexDirection: "column", gap };
 }
+
+/**
+ * Overlay & interaction tokens (drawers, modals, toasts, busy states).
+ * Deliberately plain numbers/strings so they work BOTH as inline-style values
+ * AND as operands for JS breakpoint comparisons — inline styles cannot hold
+ * media queries, so responsive overlays compare against these in JS.
+ */
+
+/** Stacking order for fixed overlays. Toasts always win. */
+export const Z = { drawer: 40, modal: 50, toast: 60 } as const;
+
+/** Standard animation durations, ready for `animation` shorthand values. */
+export const DURATION = {
+  fast: "120ms",
+  base: "200ms",
+  slow: "300ms",
+} as const;
+
+/** The app's standard easing curve for entrances/exits. */
+export const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+
+/** Standard control heights in px (icon buttons, inputs, list rows). */
+export const CONTROL_HEIGHT = { sm: 32, md: 40, lg: 48 } as const;
+
+/**
+ * Layout breakpoints in px, as NUMBERS for JS comparisons, e.g.
+ * `window.matchMedia(`(max-width: ${BP.sm - 1}px)`)` or
+ * `window.innerWidth < BP.md`. Mirrors the usual 640 / 768 / 1024 scale.
+ */
+export const BP = { sm: 640, md: 768, lg: 1024 } as const;
 
 
 /** Tinted status panel used by alerts across the app (incl. public forms). */

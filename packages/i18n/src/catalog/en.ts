@@ -18,6 +18,10 @@ export const en = {
     },
     loading: "Loading…",
     backHome: "Back to home",
+    close: "Close",
+    dismiss: "Dismiss",
+    confirm: "Confirm",
+    cancel: "Cancel",
   },
   /** App-shell error pages (custom 404 + React error boundary). */
   notFound: {
@@ -98,6 +102,7 @@ export const en = {
       renameLabel: "New name",
       saving: "Saving…",
       renameFailed: "Renaming failed. Please try again.",
+      loadFailed: "The forms list could not be loaded. Reload the page to try again.",
       backToDashboard: "Back to dashboard",
       draftLabel: "Draft",
       draftVersion: "Draft version {version}",
@@ -150,6 +155,19 @@ export const en = {
         reload: "Reload",
       },
       validationHeading: "Fix these issues before the draft can save:",
+      preview: {
+        show: "Preview",
+        title: "Preview form",
+        desktop: "Desktop",
+        mobile: "Mobile",
+        hint:
+          "This is the same renderer respondents will see, showing the current draft. Fields are disabled in the preview.",
+      },
+      canvas: {
+        label: "Block editor",
+        respondentView: "Respondent view",
+        editorView: "Editor",
+      },
     },
     /**
      * Submission inbox (ticket 11) — the per-form list + detail views.
@@ -217,6 +235,8 @@ export const en = {
       submit: "Sign in",
       noAccount: "Don't have an account?",
       switchToSignUp: "Create one",
+      showPassword: "Show password",
+      hidePassword: "Hide password",
     },
     signUp: {
       title: "Create your account",
@@ -244,6 +264,7 @@ export const en = {
       title: "Forgot your password?",
       emailLabel: "Email",
       submit: "Send reset link",
+      sentTitle: "Check your inbox",
       backToSignIn: "Back to sign in",
     },
     resetPassword: {
@@ -412,6 +433,9 @@ export const en = {
       endingTitleFallback: "Thank you!",
       submittedDetail: "Your response has been received.",
       fixErrorsDetail: "Please fix the highlighted fields below.",
+      progressOf: "Question {current} of {total}",
+      progressLabel: "Form progress",
+      answeredOf: "{answered} of {total} answered",
     },
   },
 } as const;

@@ -11,6 +11,7 @@ import {
   Badge,
   btn,
   C,
+  card,
   EmptyState,
   h1,
   link,
@@ -19,7 +20,7 @@ import {
 } from "../../../../../lib/ui";
 
 /**
- * Submission inbox — the per-form LIST (ticket 11).
+ * Submission inbox — the per-form LIST (ticket 11, polished).
  *
  * Server component pattern of the dashboard (session redirect, form read on
  * the internal API with the cookie forwarded): a 404 on the FORM — unknown
@@ -27,15 +28,18 @@ import {
  * Next's not-found page; the SUBMISSIONS read failing after a good form read
  * renders the i18n load-failed state instead of crashing the shell.
  *
- * Rows are newest-first (the API orders by (created_at, id) DESC) and show
- * the received time plus the form version the respondent saw, each linking
- * to the answer-beside-question detail. When the API reports another page,
- * an "Older submissions" link advances the opaque cursor (server-rendered
- * pagination; no client state).
+ * Rows are newest-first (the API orders by (created_at, id) DESC) and render
+ * as calm cards: the received time (deterministic UTC stamp from
+ * lib/submissions) is the row's single semibold link on the left, the form
+ * version the respondent saw is a badge on the right, and an aria-hidden
+ * chevron (pure decoration) hints that the row opens the
+ * answer-beside-question detail. Rows wrap instead of overflowing on small
+ * screens. When the API reports another page, an "Older submissions" link
+ * advances the opaque cursor (server-rendered pagination; no client state).
  *
  * Labels/answers are DATA here (list level: none rendered) — detail text is
- * rendered by React as escaped plain text. All strings come from the i18n
- * catalog.
+ * rendered by React as escaped plain text (no dangerouslySetInnerHTML
+ * anywhere in the inbox). All strings come from the i18n catalog.
  */
 export default async function SubmissionsPage(props: {
   params: Promise<{ id: string }>;
@@ -65,9 +69,7 @@ export default async function SubmissionsPage(props: {
         </Link>
 
         <h1 style={h1}>{t("dashboard.inbox.title")}</h1>
-        <p style={{ ...muted, marginTop: 0 }}>
-          <strong>{form.name}</strong>
-        </p>
+        <p style={{ ...muted, marginTop: 0 }}>{form.name}</p>
 
         {page === null ? (
           <Alert kind="error" role="alert">{t("dashboard.inbox.loadFailed")}</Alert>
@@ -85,7 +87,7 @@ export default async function SubmissionsPage(props: {
               margin: 0,
               display: "flex",
               flexDirection: "column",
-              gap: "0.6rem",
+              gap: "0.75rem",
             }}
             data-testid="inbox-list"
           >
@@ -93,31 +95,49 @@ export default async function SubmissionsPage(props: {
               <li
                 key={submission.id}
                 style={{
-                  background: C.white,
-                  border: `1px solid ${C.border}`,
-                  borderRadius: "10px",
-                  padding: "0.75rem 1rem",
+                  ...card,
+                  padding: "0.85rem 1rem",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                   flexWrap: "wrap",
-                  gap: "0.5rem",
+                  gap: "0.5rem 0.75rem",
                 }}
                 data-testid="inbox-row"
               >
                 <Link
                   href={`/dashboard/forms/${id}/submissions/${submission.id}`}
-                  style={{ ...link, textDecoration: "none", fontWeight: 600 }}
+                  style={{
+                    ...link,
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    minWidth: 0,
+                  }}
                 >
                   {t("dashboard.inbox.receivedAt", {
                     date: formatReceivedAt(submission.createdAt),
                   })}
                 </Link>
-                <Badge data-testid="inbox-row-version">
-                  {t("dashboard.inbox.versionBadge", {
-                    version: submission.formVersionNumber,
-                  })}
-                </Badge>
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.4rem",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Badge data-testid="inbox-row-version">
+                    {t("dashboard.inbox.versionBadge", {
+                      version: submission.formVersionNumber,
+                    })}
+                  </Badge>
+                  <span
+                    aria-hidden="true"
+                    style={{ color: C.muted, fontSize: "1.25rem", lineHeight: 1 }}
+                  >
+                    ›
+                  </span>
+                </span>
               </li>
             ))}
           </ul>

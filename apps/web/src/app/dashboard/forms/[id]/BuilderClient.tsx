@@ -19,20 +19,15 @@ import {
   type BuilderBlockKind,
 } from "../../../../lib/builder-reducer";
 import { createDraftSaver, type DraftSaver } from "../../../../lib/builder-save";
-import {
-  Alert,
-  Badge,
-  btn,
-  C,
-  Field,
-  h2,
-  input,
-  PulseDot,
-  row,
-} from "../../../../lib/ui";
+import { Alert, Badge, btn, C, Field, h2, input, row } from "../../../../lib/ui";
+import BuilderToolbar from "./BuilderToolbar";
+import PreviewModal from "./PreviewModal";
 
 /**
- * The dashboard builder (ticket 08) — client component under the T06 shell.
+ * The dashboard builder (ticket 08) — client component under the T06 shell,
+ * now with the master-prompt builder chrome: a top toolbar (breadcrumbs,
+ * publish status, autosave state, Preview) and an honest draft preview that
+ * renders the SAME presentational component as the public page.
  *
  * Editing: the respondent-facing envelope title (NOT forms.name, which stays
  * on the page above) and the four M0 block kinds (welcome / short_text /
@@ -56,12 +51,6 @@ import {
 
 type SaveStatus = "saved" | "saving" | "error" | "conflict";
 
-const STATUS_KEY = {
-  saved: "dashboard.builder.status.saved",
-  saving: "dashboard.builder.status.saving",
-  error: "dashboard.builder.status.error",
-} as const;
-
 const ADD_KEY = {
   welcome: "dashboard.builder.add.welcome",
   short_text: "dashboard.builder.add.shortText",
@@ -78,12 +67,16 @@ const BLOCK_BADGE = {
 
 export default function BuilderClient(props: {
   formId: string;
+  /** Dashboard label (forms.name) — shown in the toolbar breadcrumb. */
+  name: string;
+  status: "draft" | "published" | "closed";
   initialSchema: FormDraftSchema;
   initialDraftVersion: number;
 }) {
   const [schema, dispatch] = useReducer(builderReducer, props.initialSchema);
   const [status, setStatus] = useState<SaveStatus>("saved");
   const [issues, setIssues] = useState<string[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [saver] = useState<DraftSaver>(() =>
     createDraftSaver({
@@ -139,39 +132,13 @@ export default function BuilderClient(props: {
   }
 
   return (
-    <section
-      aria-label={t("dashboard.builder.editorLabel")}
-      style={{
-        background: C.white,
-        border: `1px solid ${C.border}`,
-        borderRadius: "10px",
-        padding: "1.25rem",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "0.6rem",
-          marginBottom: "1rem",
-        }}
-      >
-        <h2 style={{ ...h2, margin: 0 }}>{t("dashboard.builder.editorLabel")}</h2>
-        <div role="status" style={{ display: "inline-flex", alignItems: "center" }}>
-          {conflict ? null : status === "saving" ? (
-            <span style={{ color: C.muted, fontSize: "0.9rem" }}>
-              <PulseDot />
-              {t(STATUS_KEY[status])}
-            </span>
-          ) : (
-            <Badge kind={status === "saved" ? "success" : "danger"}>
-              {t(STATUS_KEY[status])}
-            </Badge>
-          )}
-        </div>
-      </div>
+    <section aria-label={t("dashboard.builder.editorLabel")}>
+      <BuilderToolbar
+        formName={props.name}
+        status={props.status}
+        saveState={conflict ? "error" : status}
+        onPreview={() => setPreviewOpen(true)}
+      />
 
       {conflict ? (
         <Alert kind="error">
@@ -188,6 +155,12 @@ export default function BuilderClient(props: {
           </button>
         </Alert>
       ) : null}
+
+      <PreviewModal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        schema={schema}
+      />
 
       <fieldset disabled={conflict} style={{ border: "none", margin: 0, padding: 0 }}>
         <Field

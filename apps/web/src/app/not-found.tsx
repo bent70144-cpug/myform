@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { t } from "@form/i18n";
-import { AuthShell, btn, muted } from "../lib/ui";
+import { AuthShell, btn, C, muted, small } from "../lib/ui";
 
 /**
  * App-wide 404. Next renders this for every notFound() call and every
@@ -14,11 +14,12 @@ export default function NotFound() {
       <p
         aria-hidden="true"
         style={{
-          fontSize: "2.4rem",
+          fontSize: "3rem",
           fontWeight: 700,
+          lineHeight: 1,
           letterSpacing: "0.04em",
-          color: "#555555",
-          margin: "0 0 0.5rem",
+          color: C.muted,
+          margin: "0 0 0.75rem",
         }}
       >
         {t("notFound.code")}
@@ -29,6 +30,16 @@ export default function NotFound() {
           {t("common.backHome")}
         </Link>
       </div>
+      <p
+        style={{
+          ...small,
+          margin: "1.25rem 0 0",
+          paddingTop: "0.9rem",
+          borderTop: `1px solid ${C.border}`,
+        }}
+      >
+        {t("common.appName")}
+      </p>
     </AuthShell>
   );
 }

@@ -16,6 +16,13 @@ import { alertStyle, C, card, fieldLabel, h1, hintText, row, softCard } from "./
 
 export * from "./ui-tokens";
 
+/**
+ * Overlay & interactive primitives (Modal, ToastProvider/useToast/ToastViewport,
+ * Skeleton, Tabs, ConfirmDialog). Client components — import them from here so
+ * `lib/ui` stays the single public entry of the kit.
+ */
+export * from "./ui-overlays";
+
 /** Status alert. Error alerts announce themselves; successes use role=status. */
 export function Alert(props: {
   kind?: "error" | "success" | "warning" | "info";
