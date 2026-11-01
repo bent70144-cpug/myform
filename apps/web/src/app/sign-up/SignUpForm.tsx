@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { t } from "@form/i18n";
 import { PASSWORD_LIMITS } from "@form/auth/password";
+import { Alert, AuthShell, btn, fieldStack, Field, input, link } from "../../../lib/ui";
 
 /**
  * Sign-up form. Posts to the SAME-ORIGIN `/v1/auth/sign-up/email` (browser
@@ -52,74 +53,96 @@ export default function SignUpForm() {
     }
   }
 
-  const labelStyle = { display: "block", marginBottom: 4 } as const;
-
   if (sentTo !== null) {
     return (
-      <main style={{ padding: "2rem", maxWidth: 480, margin: "0 auto" }}>
-        <h1>{t("auth.signUp.checkInboxTitle")}</h1>
-        <p>{t("auth.signUp.checkInboxBody", { email: sentTo })}</p>
-        <p>
-          <a href="/verify-email">{t("auth.verifyEmail.title")}</a>
-          {" · "}
-          <a href="/sign-in">{t("auth.signIn.title")}</a>
+      <AuthShell title={t("auth.signUp.checkInboxTitle")}>
+        <p style={{ margin: "0 0 1rem" }}>
+          {t("auth.signUp.checkInboxBody", { email: sentTo })}
         </p>
-      </main>
+        <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+          <a href="/verify-email" style={btn("primary")}>
+            {t("auth.verifyEmail.title")}
+          </a>
+          <a href="/sign-in" style={btn("secondary")}>
+            {t("auth.signIn.title")}
+          </a>
+        </div>
+      </AuthShell>
     );
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 360, margin: "0 auto" }}>
-      <h1>{t("auth.signUp.title")}</h1>
-      <form onSubmit={onSubmit}>
-        <label style={labelStyle}>
-          {t("auth.signUp.nameLabel")}
+    <AuthShell title={t("auth.signUp.title")}>
+      <form onSubmit={onSubmit} style={fieldStack}>
+        <Field label={t("auth.signUp.nameLabel")} htmlFor="signup-name">
           <input
+            id="signup-name"
             type="text"
             required
+            autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", marginBottom: 12 }}
+            style={input}
           />
-        </label>
-        <label style={labelStyle}>
-          {t("auth.signUp.emailLabel")}
+        </Field>
+        <Field label={t("auth.signUp.emailLabel")} htmlFor="signup-email">
           <input
+            id="signup-email"
             type="email"
             required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", marginBottom: 12 }}
+            style={input}
           />
-        </label>
-        <label style={labelStyle}>
-          {t("auth.signUp.passwordLabel")}
+        </Field>
+        <Field
+          label={t("auth.signUp.passwordLabel")}
+          htmlFor="signup-password"
+          hint={t("auth.passwordPolicyHint", { min: PASSWORD_LIMITS.min, max: PASSWORD_LIMITS.max })}
+        >
           <input
+            id="signup-password"
             type="password"
             required
             minLength={PASSWORD_LIMITS.min}
             maxLength={PASSWORD_LIMITS.max}
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", marginBottom: 4 }}
+            style={input}
           />
-        </label>
-        <p style={{ margin: "0 0 12px", color: "#555" }}>
-          {t("auth.passwordPolicyHint", { min: PASSWORD_LIMITS.min, max: PASSWORD_LIMITS.max })}
-        </p>
+        </Field>
         {errorKey ? (
-          <p role="alert" style={{ color: "#b00020" }}>
+          <Alert kind="error">
             {t(`auth.errors.${errorKey}`, { min: PASSWORD_LIMITS.min, max: PASSWORD_LIMITS.max })}
-          </p>
+          </Alert>
         ) : null}
-        <button type="submit" disabled={busy} style={{ width: "100%" }}>
+        <button type="submit" disabled={busy} style={btn("primary", { block: true })}>
           {busy ? t("common.loading") : t("auth.signUp.submit")}
         </button>
       </form>
-      <p>
+      <p
+        style={{
+          color: "#555555",
+          margin: "1rem 0 0",
+          textAlign: "center",
+          fontSize: "0.92rem",
+        }}
+      >
         {t("auth.signUp.haveAccount")}{" "}
-        <a href="/sign-in">{t("auth.signUp.switchToSignIn")}</a>
+        <a href="/sign-in" style={link}>
+          {t("auth.signUp.switchToSignIn")}
+        </a>
       </p>
-    </main>
+      <hr
+        style={{ border: "none", borderTop: "1px solid #e5e7eb", margin: "1rem 0" }}
+      />
+      <p style={{ margin: 0, textAlign: "center", fontSize: "0.92rem" }}>
+        <a href="/neon-signup" style={link}>
+          {t("neonAuth.title")}
+        </a>
+      </p>
+    </AuthShell>
   );
 }

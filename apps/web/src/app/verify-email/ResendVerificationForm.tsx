@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { t } from "@form/i18n";
+import { Alert, btn, fieldLabel, input } from "../../../lib/ui";
 
 /**
  * Resend-verification prompt — the spec's "dashboard shows a
@@ -38,33 +39,31 @@ export default function ResendVerificationForm({ initialEmail = "" }: { initialE
   }
 
   return (
-    <section style={{ marginTop: 16 }}>
-      <p>{t("auth.resend.prompt")}</p>
-      <form onSubmit={onSubmit} style={{ display: "flex", gap: 8, alignItems: "start" }}>
-        <label style={{ display: "block", flex: 1 }}>
+    <section style={{ marginTop: "0.5rem" }}>
+      <p style={{ color: "#555555", margin: "0 0 0.5rem" }}>{t("auth.resend.prompt")}</p>
+      <form onSubmit={onSubmit}>
+        <label style={fieldLabel} htmlFor="resend-email">
           {t("auth.signUp.emailLabel")}
+        </label>
+        <div style={{ display: "flex", gap: "0.6rem", alignItems: "stretch", flexWrap: "wrap" }}>
           <input
+            id="resend-email"
             type="email"
             required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%" }}
+            style={{ ...input, flex: "1 1 200px", width: "auto" }}
           />
-        </label>
-        <button type="submit" disabled={busy} style={{ marginTop: 22 }}>
-          {busy ? t("common.loading") : t("auth.resend.action")}
-        </button>
+          <button type="submit" disabled={busy} style={btn("secondary")}>
+            {busy ? t("common.loading") : t("auth.resend.action")}
+          </button>
+        </div>
       </form>
       {sent ? (
-        <p role="status" style={{ color: "#0a7d32" }}>
-          {t("auth.resend.sent")}
-        </p>
+        <Alert kind="success">{t("auth.resend.sent")}</Alert>
       ) : null}
-      {error ? (
-        <p role="alert" style={{ color: "#b00020" }}>
-          {t("auth.errors.generic")}
-        </p>
-      ) : null}
+      {error ? <Alert kind="error">{t("auth.errors.generic")}</Alert> : null}
     </section>
   );
 }

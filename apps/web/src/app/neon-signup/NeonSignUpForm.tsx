@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { t } from "@form/i18n";
 import { PASSWORD_LIMITS } from "@form/auth/password";
 import { neonAuthClient } from "../../lib/neon-auth/client";
+import { Alert, AuthShell, btn, C, fieldStack, Field, input, link } from "../../../lib/ui";
 
 /**
  * Neon Auth (managed Better Auth) email+password sign-up, with the proof
@@ -56,37 +57,46 @@ export default function NeonSignUpForm() {
     }
   }
 
-  const labelStyle = { display: "block", marginBottom: 4 } as const;
-
   if (user !== null) {
+    const rows: Array<[string, string]> = [
+      [t("neonAuth.fieldUser"), user.id],
+      [t("neonAuth.fieldEmail"), user.email],
+      [t("neonAuth.fieldName"), user.name],
+      [t("neonAuth.fieldVerified"), String(user.emailVerified)],
+      [t("neonAuth.fieldCreated"), String(user.createdAt)],
+    ];
     return (
-      <main style={{ padding: "2rem", maxWidth: 480, margin: "0 auto" }}>
-        <h1>{t("neonAuth.currentUserHeading")}</h1>
-        <table style={{ borderCollapse: "collapse", marginTop: "1rem" }}>
-          <tbody>
-            <tr>
-              <td style={{ padding: "4px 12px 4px 0", fontWeight: 600 }}>{t("neonAuth.fieldUser")}</td>
-              <td style={{ padding: "4px 0" }}>{user.id}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: "4px 12px 4px 0", fontWeight: 600 }}>{t("neonAuth.fieldEmail")}</td>
-              <td style={{ padding: "4px 0" }}>{user.email}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: "4px 12px 4px 0", fontWeight: 600 }}>{t("neonAuth.fieldName")}</td>
-              <td style={{ padding: "4px 0" }}>{user.name}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: "4px 12px 4px 0", fontWeight: 600 }}>{t("neonAuth.fieldVerified")}</td>
-              <td style={{ padding: "4px 0" }}>{String(user.emailVerified)}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: "4px 12px 4px 0", fontWeight: 600 }}>{t("neonAuth.fieldCreated")}</td>
-              <td style={{ padding: "4px 0" }}>{String(user.createdAt)}</td>
-            </tr>
-          </tbody>
-        </table>
-        <p style={{ marginTop: "1.5rem" }}>
+      <AuthShell title={t("neonAuth.currentUserHeading")} width={480}>
+        <dl style={{ margin: 0, borderTop: `1px solid ${C.border}` }}>
+          {rows.map(([label, value]) => (
+            <div
+              key={label}
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                justifyContent: "space-between",
+                padding: "0.55rem 0",
+                borderBottom: `1px solid ${C.border}`,
+                flexWrap: "wrap",
+              }}
+            >
+              <dt style={{ fontWeight: 600, fontSize: "0.9rem" }}>{label}</dt>
+              <dd
+                style={{
+                  margin: 0,
+                  color: C.muted,
+                  wordBreak: "break-all",
+                  textAlign: "right",
+                  flex: "1 1 auto",
+                  minWidth: 0,
+                }}
+              >
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <p style={{ marginTop: "1.25rem", marginBottom: 0 }}>
           <a
             href="/neon-signup"
             onClick={(e) => {
@@ -96,66 +106,70 @@ export default function NeonSignUpForm() {
               setEmail("");
               setPassword("");
             }}
+            style={btn("secondary")}
           >
             {t("neonAuth.tryAgain")}
           </a>
         </p>
-      </main>
+      </AuthShell>
     );
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 360, margin: "0 auto" }}>
-      <h1>{t("neonAuth.title")}</h1>
-      <p style={{ color: "#555" }}>{t("neonAuth.subtitle")}</p>
-      <form onSubmit={onSubmit}>
-        <label style={labelStyle}>
-          {t("neonAuth.nameLabel")}
+    <AuthShell title={t("neonAuth.title")}>
+      <p style={{ color: C.muted, margin: "0 0 1rem", fontSize: "0.92rem" }}>
+        {t("neonAuth.subtitle")}
+      </p>
+      <form onSubmit={onSubmit} style={fieldStack}>
+        <Field label={t("neonAuth.nameLabel")} htmlFor="neon-signup-name">
           <input
+            id="neon-signup-name"
             type="text"
             required
+            autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", marginBottom: 12 }}
+            style={input}
           />
-        </label>
-        <label style={labelStyle}>
-          {t("neonAuth.emailLabel")}
+        </Field>
+        <Field label={t("neonAuth.emailLabel")} htmlFor="neon-signup-email">
           <input
+            id="neon-signup-email"
             type="email"
             required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", marginBottom: 12 }}
+            style={input}
           />
-        </label>
-        <label style={labelStyle}>
-          {t("neonAuth.passwordLabel")}
+        </Field>
+        <Field
+          label={t("neonAuth.passwordLabel")}
+          htmlFor="neon-signup-password"
+          hint={t("neonAuth.passwordHint", { min: PASSWORD_LIMITS.min, max: PASSWORD_LIMITS.max })}
+        >
           <input
+            id="neon-signup-password"
             type="password"
             required
             minLength={PASSWORD_LIMITS.min}
             maxLength={PASSWORD_LIMITS.max}
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", marginBottom: 4 }}
+            style={input}
           />
-        </label>
-        <p style={{ margin: "0 0 12px", color: "#555" }}>
-          {t("neonAuth.passwordHint", { min: PASSWORD_LIMITS.min, max: PASSWORD_LIMITS.max })}
-        </p>
-        {errorKey ? (
-          <p role="alert" style={{ color: "#b00020" }}>
-            {t(`neonAuth.${errorKey}`)}
-          </p>
-        ) : null}
-        <button type="submit" disabled={busy} style={{ width: "100%" }}>
+        </Field>
+        {errorKey ? <Alert kind="error">{t(`neonAuth.${errorKey}`)}</Alert> : null}
+        <button type="submit" disabled={busy} style={btn("primary", { block: true })}>
           {busy ? t("common.loading") : t("neonAuth.submit")}
         </button>
       </form>
-      <p>
-        <a href="/sign-up">{t("auth.signUp.title")}</a>
+      <p style={{ margin: "1rem 0 0", textAlign: "center", fontSize: "0.92rem" }}>
+        <a href="/sign-up" style={link}>
+          {t("auth.signUp.title")}
+        </a>
       </p>
-    </main>
+    </AuthShell>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { t } from "@form/i18n";
+import { Alert, AuthShell, btn, fieldStack, Field, input, link, muted } from "../../../lib/ui";
 
 /**
  * Sign-in form. Posts to the SAME-ORIGIN `/v1/auth/sign-in/email` (the
@@ -42,45 +43,42 @@ export default function SignInForm() {
     }
   }
 
-  const labelStyle = { display: "block", marginBottom: 4 } as const;
-
   return (
-    <main style={{ padding: "2rem", maxWidth: 360, margin: "0 auto" }}>
-      <h1>{t("auth.signIn.title")}</h1>
-      <form onSubmit={onSubmit}>
-        <label style={labelStyle}>
-          {t("auth.signIn.emailLabel")}
+    <AuthShell title={t("auth.signIn.title")}>
+      <form onSubmit={onSubmit} style={fieldStack}>
+        <Field label={t("auth.signIn.emailLabel")} htmlFor="signin-email">
           <input
+            id="signin-email"
             type="email"
             required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", marginBottom: 12 }}
+            style={input}
           />
-        </label>
-        <label style={labelStyle}>
-          {t("auth.signIn.passwordLabel")}
+        </Field>
+        <Field label={t("auth.signIn.passwordLabel")} htmlFor="signin-password">
           <input
+            id="signin-password"
             type="password"
             required
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", marginBottom: 12 }}
+            style={input}
           />
-        </label>
-        {errorKey ? (
-          <p role="alert" style={{ color: "#b00020" }}>
-            {t(`auth.errors.${errorKey}`)}
-          </p>
-        ) : null}
-        <button type="submit" disabled={busy} style={{ width: "100%" }}>
+        </Field>
+        {errorKey ? <Alert kind="error">{t(`auth.errors.${errorKey}`)}</Alert> : null}
+        <button type="submit" disabled={busy} style={btn("primary", { block: true })}>
           {busy ? t("common.loading") : t("auth.signIn.submit")}
         </button>
       </form>
-      <p>
+      <p style={{ ...muted, marginTop: "1rem", marginBottom: 0, textAlign: "center" }}>
         {t("auth.signIn.noAccount")}{" "}
-        <a href="/sign-up">{t("auth.signIn.switchToSignUp")}</a>
+        <a href="/sign-up" style={link}>
+          {t("auth.signIn.switchToSignUp")}
+        </a>
       </p>
-    </main>
+    </AuthShell>
   );
 }

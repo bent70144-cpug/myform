@@ -11,11 +11,37 @@ export const metadata: Metadata = {
   description: en.home.subtitle,
 };
 
+/**
+ * Framework-free baseline: box-sizing everywhere, a visible keyboard-focus
+ * ring, and the keyframes the shared PulseDot uses. Inline styles cannot
+ * express pseudo-classes/keyframes, so this is the ONLY global stylesheet in
+ * the app — everything else styles itself through the shared tokens in
+ * lib/ui.tsx.
+ */
+const GLOBAL_CSS = `
+*, *::before, *::after { box-sizing: border-box; }
+:focus-visible { outline: 2px solid #1f2937; outline-offset: 2px; }
+@keyframes uiPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif" }}>
-        {children}
+      <body
+        style={{
+          margin: 0,
+          fontFamily: "system-ui, sans-serif",
+          color: "#1f2937",
+          background: "#ffffff",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <style>{GLOBAL_CSS}</style>
+        <div id="main" style={{ flex: 1 }}>
+          {children}
+        </div>
       </body>
     </html>
   );

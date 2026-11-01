@@ -17,6 +17,13 @@ export const en = {
       unreachable: "Service is alive but the database is unreachable",
     },
     loading: "Loading…",
+    backHome: "Back to home",
+  },
+  /** App-shell error pages (custom 404 + React error boundary). */
+  notFound: {
+    title: "Page not found",
+    body: "The page you are looking for does not exist or may have been moved.",
+    code: "404",
   },
   home: {
     title: "Collect structured client intake, safely",
@@ -305,7 +312,11 @@ export const en = {
     notFound: { title: "Not found" },
     conflict: { title: "Conflict" },
     rateLimited: { title: "Too many requests" },
-    internal: { title: "Unexpected error" },
+    internal: {
+      title: "Unexpected error",
+      body: "Something went wrong on our side. Reload the page to try again.",
+      retry: "Try again",
+    },
     notImplemented: { title: "Not implemented" },
     draftConflict: {
       title: "Conflict",

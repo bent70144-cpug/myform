@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { t } from "@form/i18n";
+import { AuthShell, PulseDot } from "../../lib/ui";
 import SignInForm from "./SignInForm";
 
 /**
@@ -7,7 +9,16 @@ import SignInForm from "./SignInForm";
  */
 export default function SignInPage() {
   return (
-    <Suspense fallback={<main style={{ padding: "2rem" }}>{null}</main>}>
+    <Suspense
+      fallback={
+        <AuthShell title={t("auth.signIn.title")}>
+          <p role="status" style={{ color: "#555555", margin: 0 }}>
+            <PulseDot />
+            {t("common.loading")}
+          </p>
+        </AuthShell>
+      }
+    >
       <SignInForm />
     </Suspense>
   );
