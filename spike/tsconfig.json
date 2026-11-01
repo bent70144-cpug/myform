@@ -1,0 +1,10 @@
+{
+  "extends": "@myform/config/tsconfig/package.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "noEmit": true
+  },
+  "include": ["src", "test", "vitest.config.ts"],
+  "exclude": ["webapp", "node_modules", "dist"]
+}

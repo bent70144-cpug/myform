@@ -1,0 +1,11 @@
+{
+  "name": "@myform/spike-webapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Spike-only Next.js app: /v1/* rewrite to the spike NestJS API + in-process env probe (no deps; runs from the spike package's node_modules)",
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start",
+    "build": "next build"
+  }
+}

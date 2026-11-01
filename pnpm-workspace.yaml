@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - spike
 
 # Build scripts pnpm is allowed to run (pnpm 12 reads this, not package.json).
 # @embedded-postgres/linux-x64 MUST hydrate its Postgres binaries or nothing boots.
@@ -16,3 +17,13 @@ onlyBuiltDependencies:
   - sharp
   - unrs-resolver
   - workerd
+
+minimumReleaseAgeExclude:
+  - '@better-auth/core@1.7.15'
+  - '@better-auth/drizzle-adapter@1.7.15'
+  - '@better-auth/kysely-adapter@1.7.15'
+  - '@better-auth/memory-adapter@1.7.15'
+  - '@better-auth/mongo-adapter@1.7.15'
+  - '@better-auth/prisma-adapter@1.7.15'
+  - '@better-auth/telemetry@1.7.15'
+  - better-auth@1.7.15
