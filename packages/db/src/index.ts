@@ -1,5 +1,4 @@
-import { PoolClient } from "pg";
-import { runAdminBootstrap, type BootstrapPasswords } from "./bootstrap";
+import type { PoolClient } from "pg";
 
 export { runAdminBootstrap, ROLES, SCHEMAS, BootstrapError, type BootstrapPasswords } from "./bootstrap";
 export {

@@ -79,6 +79,24 @@ export async function startTestPostgres(
         databaseName,
         stop: async () => {
           try {
+            // Terminate any client still connected (e.g. a leaked pg-boss
+            // pool) BEFORE the fast shutdown, so postgres never has to send
+            // 57P01 "terminating connection" errors to live sockets — those
+            // land as unhandled 'error' events and fail the test run even
+            // when every test passed.
+            const admin = new Client({ connectionString: urlFor("postgres", TEST_SUPERUSER_PASSWORD, port, databaseName) });
+            try {
+              await admin.connect();
+              await admin.query(
+                "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = $1 AND pid <> pg_backend_pid()",
+                [databaseName],
+              );
+            } catch {
+              // best-effort: if this fails, the shutdown below still runs
+            } finally {
+              await admin.end().catch(() => undefined);
+            }
+            await new Promise((resolve) => setTimeout(resolve, 50));
             await pg.stop();
           } finally {
             rmSync(dataDir, { recursive: true, force: true });

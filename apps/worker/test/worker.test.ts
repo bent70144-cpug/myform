@@ -30,6 +30,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await queue?.stop();
   await testDb?.stop();
 });
 
