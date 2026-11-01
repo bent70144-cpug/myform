@@ -12,6 +12,7 @@ export const en = {
   "health.db.unreachable": "The service is live but the database is unreachable.",
 
   "error.validation_failed": "Some values are not valid. Check the highlighted fields.",
+  "error.bad_request": "The request could not be understood.",
   "error.invalid_character": "This value contains characters that cannot be stored.",
   "error.schema_too_large": "This form is too large to save.",
   "error.submission_too_large": "These answers are too large to submit.",
