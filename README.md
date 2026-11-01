@@ -111,8 +111,8 @@ Docker is not required (or assumed). Per
   Postgres + Mailpit for Docker-capable machines, but it is not the default
   path.
 - Neon/Render/email-provider steps are implemented as code, workflows, and
-  [docs/RUNBOOK-deploy.md](docs/RUNBOOK-deploy.md); live verification requires
-  credentials.
+  [docs/runbooks/alpha-deploy.md](docs/runbooks/alpha-deploy.md); live
+  verification requires credentials.
 
 ## Security architecture
 
@@ -162,7 +162,7 @@ pnpm smoke:alpha   # boots embedded PG + supervisor stack, drives the real
 The operational checklist (who holds each secret, the exact Render env
 allowlist, email-domain verification, cold-start measurement, and the manual
 live smoke on the alpha URL) is in
-[docs/RUNBOOK-deploy.md](docs/RUNBOOK-deploy.md); the workflows are
+[docs/runbooks/alpha-deploy.md](docs/runbooks/alpha-deploy.md); the workflows are
 [.github/workflows/ci.yml](.github/workflows/ci.yml) and
 [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
@@ -171,5 +171,5 @@ live smoke on the alpha URL) is in
 - [spec.md](spec.md) — M0 requirements (source of truth).
 - [GLOSSARY.md](GLOSSARY.md) — domain terms as implemented.
 - [docs/adr/](docs/adr) — architecture decision records.
-- [docs/RUNBOOK-deploy.md](docs/RUNBOOK-deploy.md) — alpha deploy runbook.
+- [docs/runbooks/alpha-deploy.md](docs/runbooks/alpha-deploy.md) — alpha deploy runbook + pending-user checklist.
 - [issues/](issues) — ticket-by-ticket implementation records.
