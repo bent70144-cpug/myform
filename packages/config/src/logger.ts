@@ -18,6 +18,7 @@ export const REDACT_PATHS: string[] = [
   "headers['x-form-session']",
   // flat and one-level-deep generic locations
   "cookie",
+  "cookies",
   "authorization",
   "set-cookie",
   "password",
@@ -28,6 +29,7 @@ export const REDACT_PATHS: string[] = [
   "sessionToken",
   "secret",
   "*.cookie",
+  "*.cookies",
   "*.authorization",
   "*.set-cookie",
   "*.password",

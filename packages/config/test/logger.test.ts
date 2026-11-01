@@ -25,6 +25,7 @@ describe("structured logger redaction", () => {
     const joined = REDACT_PATHS.join("\n");
     expect(joined).toContain("req.headers.cookie");
     expect(joined).toContain("req.headers.authorization");
+    expect(joined).toContain("cookies");
     expect(joined).toContain("password");
     expect(joined).toContain("token");
   });
@@ -54,6 +55,30 @@ describe("structured logger redaction", () => {
     expect(out).toContain(REDACTED_PLACEHOLDER);
     // Non-sensitive fields still render.
     expect(out).toContain("/v1/auth/sign-in");
+  });
+
+  it("redacts NESTED authorization/cookies/token fields (worker job payloads)", () => {
+    // Review round 3: the worker logs through this factory now, so the
+    // one-level-deep wildcard locations must be covered too — a handler
+    // logging `{ context: { authorization, cookies, token } }` still redacts.
+    const { logger, output } = captureLogger();
+    logger.info({
+      event: "worker.session_purge",
+      context: {
+        authorization: "Bearer NESTEDBEARER789",
+        cookies: "better-auth.session_token=NESTEDCOOKIE456",
+        token: "NESTEDTOKEN123",
+      },
+      job: "session.purge",
+    });
+    const out = output();
+    expect(out).not.toContain("NESTEDBEARER789");
+    expect(out).not.toContain("NESTEDCOOKIE456");
+    expect(out).not.toContain("NESTEDTOKEN123");
+    expect(out).toContain(REDACTED_PLACEHOLDER);
+    // Non-sensitive sibling fields still render.
+    expect(out).toContain("worker.session_purge");
+    expect(out).toContain("session.purge");
   });
 
   it("keeps non-sensitive data intact and produces JSON lines", () => {

@@ -1,5 +1,9 @@
-import pino from "pino";
-import { loadEnv, workerEnvSchema, type WorkerEnv } from "@form/config";
+import {
+  createLogger,
+  loadEnv,
+  workerEnvSchema,
+  type WorkerEnv,
+} from "@form/config";
 import { createPool } from "@form/database";
 import {
   PgBossJobQueue,
@@ -57,7 +61,8 @@ export interface WorkerOptions {
   /** Log level (default "info"; the main entrypoint passes the validated
    *  LOG_LEVEL env value). */
   logLevel?: string;
-  /** Structured logger (default: pino on stdout). */
+  /** Structured logger (default: the shared redacting pino factory on
+   *  stdout — spec: logs never carry cookies/tokens/authorization). */
   logger?: OutboxLogger;
   /** Outbox handlers keyed by event_type (default: workspace.created +
    *  form.created loggers). */
@@ -98,9 +103,12 @@ export async function startWorker(options: WorkerOptions): Promise<StartedWorker
     options.dispatchIntervalMs ?? DEFAULT_DISPATCH_INTERVAL_MS;
   const logger: OutboxLogger =
     options.logger ??
-    pino({
+    createLogger({
+      name: "worker",
       // The main entrypoint validates the environment and passes LOG_LEVEL
       // through; programmatic callers (tests) pass logLevel or a logger.
+      // The shared factory (packages/config/src/logger.ts) applies the
+      // spec's redaction guardrail to the worker's stdout logs too.
       level: options.logLevel ?? "info",
     });
 
