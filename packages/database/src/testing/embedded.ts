@@ -28,6 +28,17 @@ export const EMBEDDED_PG = {
 
 const DATA_DIR = path.join(os.tmpdir(), "form-embedded-pg");
 const PID_FILE = path.join(os.tmpdir(), "form-embedded-pg.pid");
+/**
+ * Written by the STARTER after `form_dev` / `form_test` exist. Consumers that
+ * poll the port (the supervisor) must wait for this marker instead of a bare
+ * TCP connect: the server accepts connections BEFORE the dev/test databases
+ * are created, and a port-open probe in that window races the bootstrap
+ * (observed in CI as `database "form_dev" does not exist`).
+ */
+export const DATABASES_READY_FILE = path.join(
+  os.tmpdir(),
+  "form-embedded-pg.dbs-ready",
+);
 
 let handle: EmbeddedPostgres | null = null;
 
@@ -95,6 +106,9 @@ export async function ensureEmbeddedPostgres(): Promise<EmbeddedPgHandle> {
   const lockFile = `${PID_FILE}.lock`;
   const fd = fs.openSync(lockFile, "wx");
   try {
+    // Invalidate any marker from a previous run BEFORE starting: consumers
+    // must only trust the marker THIS process writes at the end.
+    fs.rmSync(DATABASES_READY_FILE, { force: true });
     fs.mkdirSync(DATA_DIR, { recursive: true });
     const needsInit = !fs.existsSync(path.join(DATA_DIR, "PG_VERSION"));
     handle = new EmbeddedPostgres({
@@ -136,6 +150,9 @@ export async function ensureEmbeddedPostgres(): Promise<EmbeddedPgHandle> {
     } finally {
       await dbCreator.end().catch(() => undefined);
     }
+    // Dev/test databases now exist — release port-waiters (see the constant's
+    // docblock for the race this closes).
+    fs.writeFileSync(DATABASES_READY_FILE, String(Date.now()));
     fs.writeFileSync(PID_FILE, String(process.pid));
     return { started: true, port: EMBEDDED_PG.port };
   } finally {

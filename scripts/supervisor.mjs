@@ -31,6 +31,8 @@
  * exported so CI can test it directly.
  */
 import net from "node:net";
+import fs from "node:fs";
+import os from "node:os";
 import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -143,10 +145,14 @@ function isPortOpen(port, host = "127.0.0.1", timeoutMs = 800) {
   });
 }
 
-async function waitForPort(port, host, timeoutMs) {
+/**
+ * Wait used by dev(): the port must accept connections AND the starter's
+ * databases-ready marker must exist (see dev() and DATABASES_READY_FILE).
+ */
+async function waitForDatabasesReady(port, readyFile, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    if (await isPortOpen(port, host)) return true;
+    if ((await isPortOpen(port)) && fs.existsSync(readyFile)) return true;
     await new Promise((r) => setTimeout(r, 300));
   }
   return false;
@@ -269,11 +275,19 @@ function shutdown() {
 async function dev() {
   const d = devDefaults();
 
+  // Ready marker written by the embedded-PG starter once form_dev/form_test
+  // EXIST (the server accepts connections before that — a bare port-open
+  // probe raced the bootstrap step below; see
+  // packages/database/src/testing/embedded.ts DATABASES_READY_FILE).
+  const dbsReadyFile = path.join(os.tmpdir(), "form-embedded-pg.dbs-ready");
+
   // 1. Postgres substitute: reuse anything already listening on the port.
   if (await isPortOpen(Number(d.pgPort))) {
     process.stdout.write(`[pg] reusing server on 127.0.0.1:${d.pgPort}\n`);
   } else {
     process.stdout.write(`[pg] starting embedded-postgres on ${d.pgPort}\n`);
+    // Only trust a marker THIS run's starter writes.
+    fs.rmSync(dbsReadyFile, { force: true });
     spawnChild(
       "pg",
       process.execPath,
@@ -284,9 +298,11 @@ async function dev() {
       ROOT,
       { ...process.env },
     );
-    const ready = await waitForPort(Number(d.pgPort), "127.0.0.1", 60_000);
+    const ready = await waitForDatabasesReady(Number(d.pgPort), dbsReadyFile, 60_000);
     if (!ready) {
-      process.stderr.write("[pg] embedded postgres did not become ready\n");
+      process.stderr.write(
+        "[pg] embedded postgres did not become ready (port open + dev/test databases created)\n",
+      );
       process.exit(1);
     }
   }
