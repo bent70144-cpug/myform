@@ -19,6 +19,17 @@ import {
   type BuilderBlockKind,
 } from "../../../../lib/builder-reducer";
 import { createDraftSaver, type DraftSaver } from "../../../../lib/builder-save";
+import {
+  Alert,
+  Badge,
+  btn,
+  C,
+  Field,
+  h2,
+  input,
+  PulseDot,
+  row,
+} from "../../../../lib/ui";
 
 /**
  * The dashboard builder (ticket 08) — client component under the T06 shell.
@@ -56,6 +67,13 @@ const ADD_KEY = {
   short_text: "dashboard.builder.add.shortText",
   long_text: "dashboard.builder.add.longText",
   ending: "dashboard.builder.add.ending",
+} as const;
+
+const BLOCK_BADGE = {
+  welcome: "success",
+  short_text: "neutral",
+  long_text: "neutral",
+  ending: "warning",
 } as const;
 
 export default function BuilderClient(props: {
@@ -121,56 +139,100 @@ export default function BuilderClient(props: {
   }
 
   return (
-    <section aria-label={t("dashboard.builder.editorLabel")}>
-      <div role="status">{conflict ? "" : t(STATUS_KEY[status])}</div>
+    <section
+      aria-label={t("dashboard.builder.editorLabel")}
+      style={{
+        background: C.white,
+        border: `1px solid ${C.border}`,
+        borderRadius: "10px",
+        padding: "1.25rem",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "0.6rem",
+          marginBottom: "1rem",
+        }}
+      >
+        <h2 style={{ ...h2, margin: 0 }}>{t("dashboard.builder.editorLabel")}</h2>
+        <div role="status" style={{ display: "inline-flex", alignItems: "center" }}>
+          {conflict ? null : status === "saving" ? (
+            <span style={{ color: C.muted, fontSize: "0.9rem" }}>
+              <PulseDot />
+              {t(STATUS_KEY[status])}
+            </span>
+          ) : (
+            <Badge kind={status === "saved" ? "success" : "danger"}>
+              {t(STATUS_KEY[status])}
+            </Badge>
+          )}
+        </div>
+      </div>
 
       {conflict ? (
-        <div role="alert" style={{ border: "1px solid #b00020", padding: "0.75rem" }}>
-          <p>
-            <strong>{t("dashboard.builder.status.conflict")}</strong>
+        <Alert kind="error">
+          <p style={{ fontWeight: 600, margin: "0 0 0.3rem" }}>
+            {t("dashboard.builder.status.conflict")}
           </p>
-          <p>{t("dashboard.builder.status.conflictHint")}</p>
-          <button type="button" onClick={() => window.location.reload()}>
+          <p style={{ margin: "0 0 0.6rem" }}>{t("dashboard.builder.status.conflictHint")}</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            style={btn("primary", { small: true })}
+          >
             {t("dashboard.builder.status.reload")}
           </button>
-        </div>
+        </Alert>
       ) : null}
 
       <fieldset disabled={conflict} style={{ border: "none", margin: 0, padding: 0 }}>
-        <div>
-          <label htmlFor="builder-schema-title">
-            {t("dashboard.builder.schemaTitleLabel")}
-          </label>
+        <Field
+          label={t("dashboard.builder.schemaTitleLabel")}
+          htmlFor="builder-schema-title"
+          hint={t("dashboard.builder.schemaTitleHint")}
+        >
           <input
             id="builder-schema-title"
             type="text"
             value={schema.title}
             onChange={(e) => apply({ type: "set_title", title: e.target.value })}
+            style={input}
           />
-          <p style={{ color: "#555", margin: "0.25rem 0 0" }}>
-            {t("dashboard.builder.schemaTitleHint")}
-          </p>
-        </div>
+        </Field>
 
-        <h2>{t("dashboard.builder.addBlockHeading")}</h2>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <h2 style={{ ...h2, marginTop: "1.5rem" }}>{t("dashboard.builder.addBlockHeading")}</h2>
+        <div style={row}>
           {(["welcome", "short_text", "long_text", "ending"] as const).map((kind) => (
             <button
               key={kind}
               type="button"
               onClick={() => addBlock(kind)}
               disabled={conflict || schema.blocks.length >= MAX_BLOCKS}
+              style={btn("secondary", { small: true })}
             >
               {t(ADD_KEY[kind])}
             </button>
           ))}
         </div>
 
-        <h2>{t("dashboard.forms.blocksHeading")}</h2>
+        <h2 style={{ ...h2, marginTop: "1.5rem" }}>{t("dashboard.forms.blocksHeading")}</h2>
         {schema.blocks.length === 0 ? (
-          <p>{t("dashboard.forms.blocksEmpty")}</p>
+          <p style={{ color: C.muted, margin: 0 }}>{t("dashboard.forms.blocksEmpty")}</p>
         ) : (
-          <ol style={{ listStyle: "none", padding: 0 }}>
+          <ol
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem",
+            }}
+          >
             {schema.blocks.map((block, index) => (
               <li key={block.id}>
                 <BlockCard
@@ -186,14 +248,16 @@ export default function BuilderClient(props: {
       </fieldset>
 
       {issues.length > 0 && !conflict ? (
-        <div role="alert">
-          <p>{t("dashboard.builder.validationHeading")}</p>
-          <ul>
+        <Alert kind="error">
+          <p style={{ fontWeight: 600, margin: "0 0 0.35rem" }}>
+            {t("dashboard.builder.validationHeading")}
+          </p>
+          <ul style={{ margin: 0, paddingLeft: "1.1rem" }}>
             {issues.map((line, i) => (
               <li key={i}>{line}</li>
             ))}
           </ul>
-        </div>
+        </Alert>
       ) : null}
     </section>
   );
@@ -231,56 +295,77 @@ function BlockCard(props: {
     }
   }
 
+  const iconBtn = btn("secondary", { small: true });
+
   return (
     <div
       onDragOver={(e) => e.preventDefault()}
       onDrop={onDrop}
-      style={{ border: "1px solid #eee", padding: "0.75rem", borderRadius: 4 }}
+      style={{
+        border: `1px solid ${C.border}`,
+        background: C.soft,
+        padding: "0.9rem 1rem",
+        borderRadius: "10px",
+      }}
     >
-      <p style={{ margin: 0 }}>
-        <span style={{ color: "#555" }}>{name}</span>
-        <span
-          draggable
-          onDragStart={() => {
-            dragIdRef.current = block.id;
-          }}
-          onDragEnd={() => {
-            dragIdRef.current = null;
-          }}
-          title={t("dashboard.builder.dragHandle", { name })}
-          style={{ cursor: "grab", padding: "0 0.5rem" }}
-        >
-          ⠿
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "0.5rem",
+          marginBottom: "0.6rem",
+        }}
+      >
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+          <Badge kind={BLOCK_BADGE[block.kind]}>{name}</Badge>
+          <span
+            draggable
+            onDragStart={() => {
+              dragIdRef.current = block.id;
+            }}
+            onDragEnd={() => {
+              dragIdRef.current = null;
+            }}
+            title={t("dashboard.builder.dragHandle", { name })}
+            aria-hidden="true"
+            style={{ cursor: "grab", padding: "0 0.4rem", color: C.muted, userSelect: "none" }}
+          >
+            ⠿
+          </span>
         </span>
-      </p>
+        <span style={{ display: "inline-flex", gap: "0.3rem" }}>
+          <button
+            type="button"
+            onClick={() => apply({ type: "move_block", id: block.id, direction: "up" })}
+            disabled={index === 0}
+            aria-label={t("dashboard.builder.moveUp", { name })}
+            style={iconBtn}
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            onClick={() => apply({ type: "move_block", id: block.id, direction: "down" })}
+            disabled={index === total - 1}
+            aria-label={t("dashboard.builder.moveDown", { name })}
+            style={iconBtn}
+          >
+            ↓
+          </button>
+          <button
+            type="button"
+            onClick={() => apply({ type: "remove_block", id: block.id })}
+            aria-label={t("dashboard.builder.deleteBlock", { name })}
+            style={btn("danger", { small: true })}
+          >
+            ✕
+          </button>
+        </span>
+      </div>
 
       <BlockFields block={block} apply={apply} />
-
-      <div style={{ display: "flex", gap: 8, marginTop: "0.5rem" }}>
-        <button
-          type="button"
-          onClick={() => apply({ type: "move_block", id: block.id, direction: "up" })}
-          disabled={index === 0}
-          aria-label={t("dashboard.builder.moveUp", { name })}
-        >
-          ↑
-        </button>
-        <button
-          type="button"
-          onClick={() => apply({ type: "move_block", id: block.id, direction: "down" })}
-          disabled={index === total - 1}
-          aria-label={t("dashboard.builder.moveDown", { name })}
-        >
-          ↓
-        </button>
-        <button
-          type="button"
-          onClick={() => apply({ type: "remove_block", id: block.id })}
-          aria-label={t("dashboard.builder.deleteBlock", { name })}
-        >
-          ✕
-        </button>
-      </div>
     </div>
   );
 }
@@ -293,9 +378,14 @@ function BlockFields(props: {
 
   if (block.kind === "welcome" || block.kind === "ending") {
     return (
-      <div>
-        <div>
-          <label htmlFor={`${block.id}-title`}>{t("dashboard.builder.titleLabel")}</label>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "0.75rem",
+        }}
+      >
+        <Field label={t("dashboard.builder.titleLabel")} htmlFor={`${block.id}-title`}>
           <input
             id={`${block.id}-title`}
             type="text"
@@ -303,12 +393,13 @@ function BlockFields(props: {
             onChange={(e) =>
               apply({ type: "update_block", id: block.id, patch: { title: e.target.value } })
             }
+            style={input}
           />
-        </div>
-        <div>
-          <label htmlFor={`${block.id}-description`}>
-            {t("dashboard.builder.descriptionLabel")}
-          </label>
+        </Field>
+        <Field
+          label={t("dashboard.builder.descriptionLabel")}
+          htmlFor={`${block.id}-description`}
+        >
           <input
             id={`${block.id}-description`}
             type="text"
@@ -320,16 +411,22 @@ function BlockFields(props: {
                 patch: { description: e.target.value },
               })
             }
+            style={input}
           />
-        </div>
+        </Field>
       </div>
     );
   }
 
   return (
-    <div>
-      <div>
-        <label htmlFor={`${block.id}-label`}>{t("dashboard.builder.labelLabel")}</label>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: "0.75rem",
+      }}
+    >
+      <Field label={t("dashboard.builder.labelLabel")} htmlFor={`${block.id}-label`}>
         <input
           id={`${block.id}-label`}
           type="text"
@@ -337,12 +434,13 @@ function BlockFields(props: {
           onChange={(e) =>
             apply({ type: "update_block", id: block.id, patch: { label: e.target.value } })
           }
+          style={input}
         />
-      </div>
-      <div>
-        <label htmlFor={`${block.id}-description`}>
-          {t("dashboard.builder.descriptionLabel")}
-        </label>
+      </Field>
+      <Field
+        label={t("dashboard.builder.descriptionLabel")}
+        htmlFor={`${block.id}-description`}
+      >
         <input
           id={`${block.id}-description`}
           type="text"
@@ -354,12 +452,10 @@ function BlockFields(props: {
               patch: { description: e.target.value },
             })
           }
+          style={input}
         />
-      </div>
-      <div>
-        <label htmlFor={`${block.id}-placeholder`}>
-          {t("dashboard.builder.placeholderLabel")}
-        </label>
+      </Field>
+      <Field label={t("dashboard.builder.placeholderLabel")} htmlFor={`${block.id}-placeholder`}>
         <input
           id={`${block.id}-placeholder`}
           type="text"
@@ -371,9 +467,20 @@ function BlockFields(props: {
               patch: { placeholder: e.target.value },
             })
           }
+          style={input}
         />
-      </div>
-      <label style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+      </Field>
+      <label
+        style={{
+          display: "inline-flex",
+          gap: 6,
+          alignItems: "center",
+          alignSelf: "end",
+          fontWeight: 600,
+          fontSize: "0.92rem",
+          paddingBottom: "0.55rem",
+        }}
+      >
         <input
           type="checkbox"
           checked={block.required}

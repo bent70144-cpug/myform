@@ -11,6 +11,7 @@ import {
   worstCaseExceedsCap,
   type PublishIssue,
 } from "../../../../lib/publish";
+import { Alert, Badge, btn, card, C, row } from "../../../../lib/ui";
 
 /**
  * Publish controls (ticket 09) — the dashboard's status line,
@@ -46,6 +47,12 @@ const STATUS_KEY = {
   draft: "dashboard.publish.status.draft",
   published: "dashboard.publish.status.published",
   closed: "dashboard.publish.status.closed",
+} as const;
+
+const STATUS_BADGE = {
+  draft: "neutral",
+  published: "success",
+  closed: "warning",
 } as const;
 
 export default function PublishControls(props: {
@@ -133,55 +140,65 @@ export default function PublishControls(props: {
     worstCaseExceedsCap(sizes.worstCaseBytes, sizes.submissionCapBytes);
 
   return (
-    <section style={{ margin: "1rem 0" }}>
-      <p>
-        <strong>{t("dashboard.publish.statusLabel")}:</strong>{" "}
-        {t(STATUS_KEY[status])}
+    <section style={{ ...card, marginBottom: "1rem" }}>
+      <div style={{ ...row, marginBottom: "0.9rem" }}>
+        <strong style={{ fontSize: "0.95rem" }}>
+          {t("dashboard.publish.statusLabel")}:
+        </strong>
+        <Badge kind={STATUS_BADGE[status]}>{t(STATUS_KEY[status])}</Badge>
         {status === "published" && versionNumber !== null ? (
-          <>
-            {" · "}
+          <span style={{ color: C.muted, fontSize: "0.9rem" }}>
             {t("dashboard.publish.publishedVersion", { version: versionNumber })}
-          </>
+          </span>
         ) : null}
-      </p>
+      </div>
 
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button type="button" onClick={onPublish} disabled={busy}>
+      <div style={row}>
+        <button type="button" onClick={onPublish} disabled={busy} style={btn("primary")}>
           {publishLabel}
         </button>
         {status === "published" ? (
-          <button type="button" onClick={onUnpublish} disabled={busy}>
+          <button type="button" onClick={onUnpublish} disabled={busy} style={btn("secondary")}>
             {phase === "unpublishing"
               ? t("dashboard.publish.unpublishing")
               : t("dashboard.publish.unpublish")}
           </button>
         ) : null}
+        {publicUrl !== null ? (
+          <button type="button" onClick={onCopy} style={btn("secondary")}>
+            {copied
+              ? t("dashboard.publish.copied")
+              : t("dashboard.publish.copyLink")}
+          </button>
+        ) : null}
       </div>
 
       {status === "closed" ? (
-        <p role="note">{t("dashboard.publish.closedMessage")}</p>
+        <Alert kind="info" role="note">{t("dashboard.publish.closedMessage")}</Alert>
       ) : null}
 
       {failed === "publish" ? (
-        <p role="alert">{t("dashboard.publish.publishFailed")}</p>
+        <Alert kind="error" role="alert">{t("dashboard.publish.publishFailed")}</Alert>
       ) : null}
       {failed === "unpublish" ? (
-        <p role="alert">{t("dashboard.publish.unpublishFailed")}</p>
+        <Alert kind="error" role="alert">{t("dashboard.publish.unpublishFailed")}</Alert>
       ) : null}
 
       {issues !== null && issues.length > 0 ? (
-        <div role="alert">
-          <p>{t("dashboard.publish.validationHeading")}</p>
-          <ul>
+        <Alert kind="error" role="alert">
+          <p style={{ fontWeight: 600, margin: "0 0 0.35rem" }}>
+            {t("dashboard.publish.validationHeading")}
+          </p>
+          <ul style={{ margin: 0, paddingLeft: "1.1rem" }}>
             {issues.map((issue, i) => (
               <li key={i}>{publishIssueMessage(issue)}</li>
             ))}
           </ul>
-        </div>
+        </Alert>
       ) : null}
 
       {showWarning && sizes ? (
-        <p role="alert">
+        <p role="alert" style={{ color: C.warning, margin: "0.75rem 0 0" }}>
           {t("dashboard.publish.worstCaseWarning", {
             worst: bytesAsKb(sizes.worstCaseBytes),
             cap: bytesAsKb(sizes.submissionCapBytes),
@@ -190,17 +207,36 @@ export default function PublishControls(props: {
       ) : null}
 
       {publicUrl !== null ? (
-        <div>
-          <p>
-            <strong>{t("dashboard.publish.publicLinkHeading")}:</strong>{" "}
-            <span>{publicUrl}</span>{" "}
-            <a href={publicUrl}>{t("dashboard.publish.openPublicPage")}</a>
+        <div
+          style={{
+            background: C.soft,
+            border: `1px solid ${C.border}`,
+            borderRadius: "8px",
+            padding: "0.75rem 0.9rem",
+            marginTop: "0.9rem",
+          }}
+        >
+          <p style={{ margin: "0 0 0.35rem", fontWeight: 600, fontSize: "0.9rem" }}>
+            {t("dashboard.publish.publicLinkHeading")}
           </p>
-          <button type="button" onClick={onCopy}>
-            {copied
-              ? t("dashboard.publish.copied")
-              : t("dashboard.publish.copyLink")}
-          </button>
+          <p
+            style={{
+              margin: "0 0 0.5rem",
+              wordBreak: "break-all",
+              fontSize: "0.9rem",
+              color: C.muted,
+            }}
+          >
+            <span>{publicUrl}</span>{" "}
+            <a
+              href={publicUrl}
+              style={{ color: C.ink, fontWeight: 600 }}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("dashboard.publish.openPublicPage")}
+            </a>
+          </p>
         </div>
       ) : null}
     </section>

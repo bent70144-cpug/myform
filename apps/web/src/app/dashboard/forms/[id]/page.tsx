@@ -5,6 +5,17 @@ import { t } from "@form/i18n";
 import { getServerSession } from "../../../../lib/session";
 import { getForm } from "../../../../lib/forms";
 import { resolveAppOrigin } from "../../../../lib/app-origin";
+import {
+  AppNav,
+  backLink,
+  btn,
+  card,
+  h1,
+  page,
+  row,
+  small,
+  stack,
+} from "../../../../lib/ui";
 import RenameForm from "../../RenameForm";
 import BuilderClient from "./BuilderClient";
 import PublishControls from "./PublishControls";
@@ -54,35 +65,52 @@ export default async function FormPage(props: {
     }) ?? "";
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <p>
-        <Link href="/dashboard">{t("dashboard.forms.backToDashboard")}</Link>
-      </p>
-
-      <h1>{form.name}</h1>
-      <p>
-        <RenameForm formId={form.id} currentName={form.name} />
-      </p>
-      <p>
-        <strong>{t("dashboard.forms.draftLabel")}:</strong>{" "}
-        {t("dashboard.forms.draftVersion", {
-          version: form.draft.draftVersion,
-        })}
-      </p>
-
-      <PublishControls formId={form.id} status={form.status} appOrigin={appOrigin} />
-
-      <p>
-        <Link href={`/dashboard/forms/${form.id}/submissions`}>
-          {t("dashboard.inbox.open")}
+    <>
+      <AppNav />
+      <main style={page}>
+        <Link href="/dashboard" style={backLink}>
+          {t("dashboard.forms.backToDashboard")}
         </Link>
-      </p>
 
-      <BuilderClient
-        formId={form.id}
-        initialSchema={form.draft.schema}
-        initialDraftVersion={form.draft.draftVersion}
-      />
-    </main>
+        <section style={{ ...card, marginBottom: "1rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "0.6rem",
+            }}
+          >
+            <h1 style={{ ...h1, marginBottom: 0 }}>{form.name}</h1>
+            <RenameForm formId={form.id} currentName={form.name} />
+          </div>
+          <p style={{ ...small, marginTop: "0.5rem", marginBottom: 0 }}>
+            <strong>{t("dashboard.forms.draftLabel")}:</strong>{" "}
+            {t("dashboard.forms.draftVersion", {
+              version: form.draft.draftVersion,
+            })}
+          </p>
+          <div style={{ ...row, marginTop: "0.9rem" }}>
+            <Link
+              href={`/dashboard/forms/${form.id}/submissions`}
+              style={btn("secondary")}
+            >
+              {t("dashboard.inbox.open")}
+            </Link>
+          </div>
+        </section>
+
+        <PublishControls formId={form.id} status={form.status} appOrigin={appOrigin} />
+
+        <div style={{ ...stack("0.75rem"), marginTop: "1rem" }}>
+          <BuilderClient
+            formId={form.id}
+            initialSchema={form.draft.schema}
+            initialDraftVersion={form.draft.draftVersion}
+          />
+        </div>
+      </main>
+    </>
   );
 }

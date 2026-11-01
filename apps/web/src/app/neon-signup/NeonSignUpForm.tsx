@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { t } from "@form/i18n";
 import { PASSWORD_LIMITS } from "@form/auth/password";
 import { neonAuthClient } from "../../lib/neon-auth/client";
-import { Alert, AuthShell, btn, C, fieldStack, Field, input, link } from "../../../lib/ui";
+import { Alert, AuthShell, btn, C, fieldStack, Field, input, link } from "../../lib/ui";
 
 /**
  * Neon Auth (managed Better Auth) email+password sign-up, with the proof

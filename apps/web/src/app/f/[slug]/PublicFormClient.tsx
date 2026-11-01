@@ -25,6 +25,7 @@ import {
   welcomeBlock,
   type PublicFormPhase,
 } from "./public-form-machine";
+import { alertStyle, btn, C, input } from "../../../lib/ui-tokens";
 
 /**
  * The INTERACTIVE public form (ticket 10) — makes T09's read-only /f/[slug]
@@ -46,24 +47,36 @@ import {
  * anywhere, so there is no horizontal scrolling at narrow viewports.
  */
 
+/** Page wrapper: soft backdrop, centered single column (matches T09 view). */
+const pageStyle = {
+  minHeight: "100vh",
+  background: C.soft,
+  padding: "2.5rem 1rem 3rem",
+  boxSizing: "border-box" as const,
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+};
+
 const containerStyle = {
-  padding: "16px",
+  width: "100%",
   maxWidth: 640,
   margin: "0 auto",
-  width: "100%",
+  background: C.white,
+  border: `1px solid ${C.border}`,
+  borderRadius: "12px",
+  padding: "24px",
   boxSizing: "border-box" as const,
 };
 
-const fieldStyle = {
-  width: "100%",
-  boxSizing: "border-box" as const,
-  padding: "8px",
-  fontSize: 16,
+const titleStyle = {
+  fontSize: "1.5rem",
+  lineHeight: 1.25,
+  margin: "0 0 16px",
 };
 
 const errorStyle = {
-  color: "#b00020",
-  margin: "4px 0 0",
+  ...alertStyle("error"),
   width: "100%",
   boxSizing: "border-box" as const,
 };
@@ -73,6 +86,23 @@ const stackStyle = {
   flexDirection: "column" as const,
   gap: 16,
   width: "100%",
+};
+
+const sectionStyle = {
+  borderTop: `1px solid ${C.border}`,
+  paddingTop: 16,
+};
+
+const labelStyle = {
+  display: "block",
+  fontWeight: 600,
+  marginBottom: 4,
+};
+
+const markStyle = {
+  fontWeight: 400,
+  fontSize: 13,
+  color: C.muted,
 };
 
 export default function PublicFormClient(props: { slug: string; schema: FormDraftSchema }) {
@@ -196,98 +226,120 @@ export default function PublicFormClient(props: { slug: string; schema: FormDraf
   );
 
   return (
-    <main style={containerStyle}>
-      <h1>{title}</h1>
-      {phase === "ended" ? (
-        <section data-testid="public-form-ended">
-          <h2>{ending !== null && ending.title.trim() !== "" ? ending.title : t("public.form.endingTitleFallback")}</h2>
-          {ending?.description !== undefined ? <p>{ending.description}</p> : null}
-          <p>{t("public.form.submittedDetail")}</p>
-        </section>
-      ) : phase === "closed" ? (
-        <section data-testid="public-form-closed">
-          <p>{t("public.form.formClosedInline")}</p>
-        </section>
-      ) : phase === "expired" ? (
-        <section data-testid="public-form-expired">
-          <p>{t("public.form.sessionExpiredInline")}</p>
-        </section>
-      ) : phase === "error" ? (
-        <section data-testid="public-form-error">
-          <p>{t("public.form.submitFailed")}</p>
-        </section>
-      ) : sessionState === "failed" ? (
-        <section data-testid="public-form-session-failed">
-          <p>{t("public.form.sessionStartFailed")}</p>
-        </section>
-      ) : (
-        <form onSubmit={(event) => void onSubmit(event)} style={stackStyle} noValidate>
-          {welcome !== null ? (
-            <section>
-              <h2>{welcome.title}</h2>
-              {welcome.description !== undefined ? <p>{welcome.description}</p> : null}
-            </section>
-          ) : null}
-
-          {showFixErrors ? <p style={errorStyle}>{t("public.form.fixErrorsDetail")}</p> : null}
-
-          {sessionState === "starting" ? (
-            <p>{t("public.form.sessionStarting")}</p>
-          ) : null}
-
-          {questionBlocks.map((block) => {
-            const mark = block.required
-              ? t("public.form.requiredMark")
-              : t("public.form.optionalMark");
-            const label = `${block.label} (${mark})`;
-            const fieldId = `f-${block.id}`;
-            const errorId = `f-${block.id}-error`;
-            const error = fieldErrors[block.id];
-            return (
-              <section key={block.id}>
-                <label htmlFor={fieldId} style={{ display: "block" }}>
-                  {label}
-                </label>
-                {block.description !== undefined ? <p>{block.description}</p> : null}
-                {block.kind === "long_text" ? (
-                  <textarea
-                    id={fieldId}
-                    name={block.id}
-                    rows={4}
-                    value={answers[block.id] ?? ""}
-                    placeholder={block.placeholder}
-                    aria-invalid={error !== undefined ? true : undefined}
-                    aria-describedby={error !== undefined ? errorId : undefined}
-                    onChange={(e) => setAnswer(block.id, e.target.value)}
-                    style={fieldStyle}
-                  />
-                ) : (
-                  <input
-                    id={fieldId}
-                    name={block.id}
-                    type="text"
-                    value={answers[block.id] ?? ""}
-                    placeholder={block.placeholder}
-                    aria-invalid={error !== undefined ? true : undefined}
-                    aria-describedby={error !== undefined ? errorId : undefined}
-                    onChange={(e) => setAnswer(block.id, e.target.value)}
-                    style={fieldStyle}
-                  />
-                )}
-                {error !== undefined ? (
-                  <p id={errorId} role="alert" style={errorStyle}>
-                    {t(`errors.schemaIssues.${error}` as never)}
-                  </p>
+    <main style={pageStyle}>
+      <div style={containerStyle}>
+        <h1 style={titleStyle}>{title}</h1>
+        {phase === "ended" ? (
+          <section data-testid="public-form-ended" style={{ textAlign: "center", padding: "1rem 0" }}>
+            <h2 style={{ margin: "0 0 6px", fontSize: "1.15rem" }}>
+              {ending !== null && ending.title.trim() !== "" ? ending.title : t("public.form.endingTitleFallback")}
+            </h2>
+            {ending?.description !== undefined ? (
+              <p style={{ margin: "0 0 8px", color: C.muted }}>{ending.description}</p>
+            ) : null}
+            <p role="status" style={{ ...alertStyle("success"), margin: "12px 0 0" }}>
+              {t("public.form.submittedDetail")}
+            </p>
+          </section>
+        ) : phase === "closed" ? (
+          <section data-testid="public-form-closed">
+            <p role="alert" style={errorStyle}>{t("public.form.formClosedInline")}</p>
+          </section>
+        ) : phase === "expired" ? (
+          <section data-testid="public-form-expired">
+            <p role="alert" style={errorStyle}>{t("public.form.sessionExpiredInline")}</p>
+          </section>
+        ) : phase === "error" ? (
+          <section data-testid="public-form-error">
+            <p role="alert" style={errorStyle}>{t("public.form.submitFailed")}</p>
+          </section>
+        ) : sessionState === "failed" ? (
+          <section data-testid="public-form-session-failed">
+            <p role="alert" style={errorStyle}>{t("public.form.sessionStartFailed")}</p>
+          </section>
+        ) : (
+          <form onSubmit={(event) => void onSubmit(event)} style={stackStyle} noValidate>
+            {welcome !== null ? (
+              <section style={{ marginBottom: 4 }}>
+                <h2 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{welcome.title}</h2>
+                {welcome.description !== undefined ? (
+                  <p style={{ margin: 0, color: C.muted }}>{welcome.description}</p>
                 ) : null}
               </section>
-            );
-          })}
+            ) : null}
 
-          <button type="submit" disabled={submitting || sessionState !== "active"} style={fieldStyle}>
-            {submitting ? t("public.form.submittingButton") : t("public.form.submitButton")}
-          </button>
-        </form>
-      )}
+            {showFixErrors ? (
+              <p role="alert" style={{ ...errorStyle, margin: 0 }}>
+                {t("public.form.fixErrorsDetail")}
+              </p>
+            ) : null}
+
+            {sessionState === "starting" ? (
+              <p style={{ color: C.muted, margin: 0 }} role="status">
+                {t("public.form.sessionStarting")}
+              </p>
+            ) : null}
+
+            {questionBlocks.map((block) => {
+              const mark = block.required
+                ? t("public.form.requiredMark")
+                : t("public.form.optionalMark");
+              const fieldId = `f-${block.id}`;
+              const errorId = `f-${block.id}-error`;
+              const error = fieldErrors[block.id];
+              return (
+                <section key={block.id} style={sectionStyle}>
+                  <label htmlFor={fieldId} style={labelStyle}>
+                    {block.label}{" "}
+                    <span style={markStyle}> ({mark})</span>
+                  </label>
+                  {block.description !== undefined ? (
+                    <p style={{ margin: "0 0 6px", color: C.muted }}>{block.description}</p>
+                  ) : null}
+                  {block.kind === "long_text" ? (
+                    <textarea
+                      id={fieldId}
+                      name={block.id}
+                      rows={4}
+                      value={answers[block.id] ?? ""}
+                      placeholder={block.placeholder}
+                      aria-invalid={error !== undefined ? true : undefined}
+                      aria-describedby={error !== undefined ? errorId : undefined}
+                      onChange={(e) => setAnswer(block.id, e.target.value)}
+                      style={input}
+                    />
+                  ) : (
+                    <input
+                      id={fieldId}
+                      name={block.id}
+                      type="text"
+                      value={answers[block.id] ?? ""}
+                      placeholder={block.placeholder}
+                      aria-invalid={error !== undefined ? true : undefined}
+                      aria-describedby={error !== undefined ? errorId : undefined}
+                      onChange={(e) => setAnswer(block.id, e.target.value)}
+                      style={input}
+                    />
+                  )}
+                  {error !== undefined ? (
+                    <p id={errorId} role="alert" style={{ ...errorStyle, margin: "4px 0 0" }}>
+                      {t(`errors.schemaIssues.${error}` as never)}
+                    </p>
+                  ) : null}
+                </section>
+              );
+            })}
+
+            <button
+              type="submit"
+              disabled={submitting || sessionState !== "active"}
+              style={btn("primary", { block: true })}
+            >
+              {submitting ? t("public.form.submittingButton") : t("public.form.submitButton")}
+            </button>
+          </form>
+        )}
+      </div>
     </main>
   );
 }

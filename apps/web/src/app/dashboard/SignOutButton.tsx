@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { t } from "@form/i18n";
+import { btn } from "../../lib/ui";
 
 /**
  * Sign-out control. Posts to the SAME-ORIGIN `/v1/auth/sign-out` (the
@@ -36,15 +37,20 @@ export default function SignOutButton() {
   }
 
   return (
-    <>
-      <button type="button" onClick={onSignOut} disabled={busy}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+      <button
+        type="button"
+        onClick={onSignOut}
+        disabled={busy}
+        style={btn("secondary", { small: true })}
+      >
         {busy ? t("common.loading") : t("auth.signOut.action")}
       </button>
       {error ? (
-        <p role="alert" style={{ color: "#b00020" }}>
+        <span role="alert" style={{ color: "#b00020", fontSize: "0.9rem" }}>
           {t("auth.errors.generic")}
-        </p>
+        </span>
       ) : null}
-    </>
+    </span>
   );
 }

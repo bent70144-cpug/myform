@@ -17,7 +17,7 @@ export default function NotFound() {
           fontSize: "2.4rem",
           fontWeight: 700,
           letterSpacing: "0.04em",
-          color: "#d1d5db",
+          color: "#555555",
           margin: "0 0 0.5rem",
         }}
       >

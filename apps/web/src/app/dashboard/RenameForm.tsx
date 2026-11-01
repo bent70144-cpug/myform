@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { t } from "@form/i18n";
 import { renameDashboardForm } from "../../lib/forms-client";
+import { btn, input } from "../../lib/ui";
 
 /**
  * Dashboard rename control (ticket 06). PATCHes `/v1/forms/{id}` — the
@@ -36,20 +37,34 @@ export default function RenameForm(props: {
     router.refresh();
   }
 
+  const compactInput = {
+    ...input,
+    width: "auto",
+    maxWidth: "14rem",
+    padding: "0.3rem 0.55rem",
+    fontSize: 14,
+  } as const;
+
   return (
-    <span style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+    <span style={{ display: "inline-flex", gap: "0.4rem", alignItems: "center", flexWrap: "wrap" }}>
       <input
         aria-label={t("dashboard.forms.renameLabel")}
         value={name}
         onChange={(e) => setName(e.target.value)}
         maxLength={200}
         size={Math.max(10, Math.min(40, props.currentName.length + 2))}
+        style={compactInput}
       />
-      <button type="button" onClick={onRename} disabled={busy}>
+      <button
+        type="button"
+        onClick={onRename}
+        disabled={busy}
+        style={btn("secondary", { small: true })}
+      >
         {busy ? t("dashboard.forms.saving") : t("dashboard.forms.rename")}
       </button>
       {failed ? (
-        <span role="alert" style={{ color: "#b00020" }}>
+        <span role="alert" style={{ color: "#b00020", fontSize: "0.9rem" }}>
           {t("dashboard.forms.renameFailed")}
         </span>
       ) : null}

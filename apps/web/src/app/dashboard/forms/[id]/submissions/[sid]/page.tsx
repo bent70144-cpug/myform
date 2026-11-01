@@ -4,6 +4,17 @@ import { t } from "@form/i18n";
 import { getServerSession } from "../../../../../../lib/session";
 import { getForm } from "../../../../../../lib/forms";
 import { formatReceivedAt, getSubmission } from "../../../../../../lib/submissions";
+import {
+  AppNav,
+  backLink,
+  Badge,
+  C,
+  card,
+  h1,
+  muted,
+  page,
+  softCard,
+} from "../../../../../../lib/ui";
 
 /**
  * Submission DETAIL (ticket 11) — each stored answer rendered BESIDE its
@@ -38,54 +49,75 @@ export default async function SubmissionDetailPage(props: {
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }} data-testid="inbox-detail">
-      <p>
-        <Link href={`/dashboard/forms/${id}/submissions`}>
+    <>
+      <AppNav />
+      <main style={page} data-testid="inbox-detail">
+        <Link href={`/dashboard/forms/${id}/submissions`} style={backLink}>
           {t("dashboard.inbox.backToInbox")}
         </Link>
-      </p>
 
-      <h1>{t("dashboard.inbox.detailTitle")}</h1>
-      <p>
-        {t("dashboard.inbox.receivedAt", {
-          date: formatReceivedAt(submission.createdAt),
-        })}{" "}
-        ·{" "}
-        <span
-          data-testid="inbox-detail-version"
+        <h1 style={h1}>{t("dashboard.inbox.detailTitle")}</h1>
+        <p
           style={{
-            border: "1px solid #ccc",
-            borderRadius: 999,
-            padding: "0 0.5rem",
+            ...muted,
+            marginTop: 0,
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "0.5rem",
           }}
         >
-          {t("dashboard.inbox.versionBadge", {
-            version: submission.formVersionNumber,
+          {t("dashboard.inbox.receivedAt", {
+            date: formatReceivedAt(submission.createdAt),
           })}
-        </span>
-      </p>
+          <Badge data-testid="inbox-detail-version">
+            {t("dashboard.inbox.versionBadge", {
+              version: submission.formVersionNumber,
+            })}
+          </Badge>
+        </p>
 
-      <dl>
-        {submission.answers.map((pair) => (
-          <div
-            key={pair.blockId}
-            data-testid="inbox-answer-pair"
-            style={{
-              borderTop: "1px solid #eee",
-              padding: "0.5rem 0",
-            }}
-          >
-            <dt style={{ fontWeight: 600 }}>
-              {pair.label !== null
-                ? pair.label
-                : t("dashboard.inbox.unknownQuestion")}
-            </dt>
-            <dd style={{ margin: "0.25rem 0 0", whiteSpace: "pre-wrap" }} data-testid="inbox-answer">
-              {pair.answer}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </main>
+        <dl
+          style={{
+            margin: 0,
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.75rem",
+          }}
+        >
+          {submission.answers.map((pair) => (
+            <div
+              key={pair.blockId}
+              data-testid="inbox-answer-pair"
+              style={{
+                ...card,
+                padding: "0.9rem 1rem",
+                margin: 0,
+              }}
+            >
+              <dt style={{ fontWeight: 600 }}>
+                {pair.label !== null
+                  ? pair.label
+                  : t("dashboard.inbox.unknownQuestion")}
+              </dt>
+              <dd
+                style={{
+                  ...softCard,
+                  margin: "0.5rem 0 0",
+                  whiteSpace: "pre-wrap",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: "8px",
+                  color: C.ink,
+                  border: `1px solid ${C.border}`,
+                }}
+                data-testid="inbox-answer"
+              >
+                {pair.answer}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </main>
+    </>
   );
 }

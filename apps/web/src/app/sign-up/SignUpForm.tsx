@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { t } from "@form/i18n";
 import { PASSWORD_LIMITS } from "@form/auth/password";
-import { Alert, AuthShell, btn, fieldStack, Field, input, link } from "../../../lib/ui";
+import { Alert, AuthShell, btn, fieldStack, Field, input, link } from "../../lib/ui";
 
 /**
  * Sign-up form. Posts to the SAME-ORIGIN `/v1/auth/sign-up/email` (browser

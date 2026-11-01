@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { t } from "@form/i18n";
 import { bootstrapWorkspace } from "../../lib/bootstrap-workspace";
+import { Alert, C, PulseDot } from "../../lib/ui";
 
 /**
  * Workspace bootstrap stepper (ticket 05 checklist): rendered by the
@@ -47,8 +48,25 @@ export default function BootstrapWorkspace() {
   }, [router]);
 
   return (
-    <p role="status" data-testid="workspace-bootstrap">
-      {failed ? t("dashboard.bootstrapFailed") : t("dashboard.settingUpWorkspace")}
-    </p>
+    <div
+      role="status"
+      data-testid="workspace-bootstrap"
+      style={{
+        border: `1px solid ${failed ? C.dangerBorder : C.border}`,
+        background: failed ? C.dangerBg : C.white,
+        borderRadius: "10px",
+        padding: "1.25rem",
+        marginTop: "1.5rem",
+      }}
+    >
+      {failed ? (
+        <Alert kind="error">{t("dashboard.bootstrapFailed")}</Alert>
+      ) : (
+        <p style={{ color: C.muted, margin: 0 }}>
+          <PulseDot />
+          {t("dashboard.settingUpWorkspace")}
+        </p>
+      )}
+    </div>
   );
 }

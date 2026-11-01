@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { t } from "@form/i18n";
-import { Alert, AuthShell, btn, fieldStack, Field, input, link, muted } from "../../../lib/ui";
+import { Alert, AuthShell, btn, fieldStack, Field, input, link, muted } from "../../lib/ui";
 
 /**
  * Sign-in form. Posts to the SAME-ORIGIN `/v1/auth/sign-in/email` (the

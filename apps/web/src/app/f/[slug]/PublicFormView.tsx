@@ -8,6 +8,7 @@
 import * as React from "react";
 import type { FormBlock } from "@form/contracts";
 import { t } from "@form/i18n";
+import { C, input, softCard } from "../../../lib/ui-tokens";
 
 /**
  * Read-only public form view (ticket 09) — a presentational component with NO
@@ -25,19 +26,51 @@ import { t } from "@form/i18n";
  *   scrolling at narrow widths.
  */
 
+/** Page wrapper: soft backdrop, centered single column. */
+const pageStyle = {
+  minHeight: "100vh",
+  background: C.soft,
+  padding: "2.5rem 1rem 3rem",
+  boxSizing: "border-box" as const,
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+};
+
+/** The form card — fluid, 360px-safe (max-width never forces overflow). */
 const containerStyle = {
-  padding: "16px",
+  width: "100%",
   maxWidth: 640,
   margin: "0 auto",
-  width: "100%",
+  background: C.white,
+  border: `1px solid ${C.border}`,
+  borderRadius: "12px",
+  padding: "24px",
   boxSizing: "border-box" as const,
 };
 
-const fieldStyle = {
-  width: "100%",
-  boxSizing: "border-box" as const,
-  padding: "8px",
-  fontSize: 16,
+const titleStyle = {
+  fontSize: "1.5rem",
+  lineHeight: 1.25,
+  margin: "0 0 16px",
+};
+
+const sectionStyle = {
+  marginBottom: 16,
+  borderTop: `1px solid ${C.border}`,
+  paddingTop: 16,
+};
+
+const labelStyle = {
+  display: "block",
+  fontWeight: 600,
+  marginBottom: 4,
+};
+
+const markStyle = {
+  fontWeight: 400,
+  fontSize: 13,
+  color: C.muted,
 };
 
 export default function PublicFormView(props: {
@@ -45,65 +78,69 @@ export default function PublicFormView(props: {
   blocks: FormBlock[];
 }) {
   return (
-    <main style={containerStyle}>
-      <h1>{props.title.trim() || t("public.form.formTitleFallback")}</h1>
-      {props.blocks.map((block) => {
-        switch (block.kind) {
-          case "welcome":
-            return (
-              <section key={block.id}>
-                <h2>{block.title}</h2>
-                {block.description !== undefined ? (
-                  <p>{block.description}</p>
-                ) : null}
-              </section>
-            );
-          case "ending":
-            return (
-              <section key={block.id}>
-                <h2>{block.title}</h2>
-                {block.description !== undefined ? (
-                  <p>{block.description}</p>
-                ) : null}
-              </section>
-            );
-          case "short_text":
-          case "long_text": {
-            const mark = block.required
-              ? t("public.form.requiredMark")
-              : t("public.form.optionalMark");
-            const label = `${block.label} (${mark})`;
-            const fieldId = `f-${block.id}`;
-            return (
-              <section key={block.id} style={{ marginBottom: 16 }}>
-                <label htmlFor={fieldId} style={{ display: "block" }}>
-                  {label}
-                </label>
-                {block.description !== undefined ? (
-                  <p>{block.description}</p>
-                ) : null}
-                {block.kind === "long_text" ? (
-                  <textarea
-                    id={fieldId}
-                    rows={4}
-                    disabled
-                    placeholder={block.placeholder}
-                    style={fieldStyle}
-                  />
-                ) : (
-                  <input
-                    id={fieldId}
-                    type="text"
-                    disabled
-                    placeholder={block.placeholder}
-                    style={fieldStyle}
-                  />
-                )}
-              </section>
-            );
+    <main style={pageStyle}>
+      <div style={containerStyle}>
+        <h1 style={titleStyle}>
+          {props.title.trim() || t("public.form.formTitleFallback")}
+        </h1>
+        {props.blocks.map((block) => {
+          switch (block.kind) {
+            case "welcome":
+              return (
+                <section key={block.id} style={{ marginBottom: 16 }}>
+                  <h2 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{block.title}</h2>
+                  {block.description !== undefined ? (
+                    <p style={{ margin: 0, color: C.muted }}>{block.description}</p>
+                  ) : null}
+                </section>
+              );
+            case "ending":
+              return (
+                <section key={block.id} style={{ marginBottom: 16 }}>
+                  <h2 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{block.title}</h2>
+                  {block.description !== undefined ? (
+                    <p style={{ margin: 0, color: C.muted }}>{block.description}</p>
+                  ) : null}
+                </section>
+              );
+            case "short_text":
+            case "long_text": {
+              const mark = block.required
+                ? t("public.form.requiredMark")
+                : t("public.form.optionalMark");
+              const fieldId = `f-${block.id}`;
+              return (
+                <section key={block.id} style={sectionStyle}>
+                  <label htmlFor={fieldId} style={labelStyle}>
+                    {block.label}{" "}
+                    <span style={markStyle}> ({mark})</span>
+                  </label>
+                  {block.description !== undefined ? (
+                    <p style={{ margin: "0 0 6px", color: C.muted }}>{block.description}</p>
+                  ) : null}
+                  {block.kind === "long_text" ? (
+                    <textarea
+                      id={fieldId}
+                      rows={4}
+                      disabled
+                      placeholder={block.placeholder}
+                      style={input}
+                    />
+                  ) : (
+                    <input
+                      id={fieldId}
+                      type="text"
+                      disabled
+                      placeholder={block.placeholder}
+                      style={input}
+                    />
+                  )}
+                </section>
+              );
+            }
           }
-        }
-      })}
+        })}
+      </div>
     </main>
   );
 }
@@ -111,9 +148,11 @@ export default function PublicFormView(props: {
 /** The closed message (unpublished or soft-deleted form) — same no-store page. */
 export function PublicFormClosed() {
   return (
-    <main style={containerStyle}>
-      <h1>{t("public.form.closedTitle")}</h1>
-      <p>{t("public.form.closedDetail")}</p>
+    <main style={pageStyle}>
+      <div style={{ ...containerStyle, textAlign: "center" }}>
+        <h1 style={titleStyle}>{t("public.form.closedTitle")}</h1>
+        <p style={{ ...softCard, margin: 0 }}>{t("public.form.closedDetail")}</p>
+      </div>
     </main>
   );
 }

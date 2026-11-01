@@ -3,6 +3,8 @@ import Link from "next/link";
 import { t } from "@form/i18n";
 import { getServerSession } from "../../lib/session";
 import { listForms } from "../../lib/forms";
+import { formatReceivedAt } from "../../lib/submissions";
+import { Alert, AppNav, C, EmptyState, h1, h2, link, muted, page, small, stack } from "../../lib/ui";
 import SignOutButton from "./SignOutButton";
 import BootstrapWorkspace from "./BootstrapWorkspace";
 import NewFormButton from "./NewFormButton";
@@ -41,34 +43,28 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>{t("dashboard.title")}</h1>
-      <p>{t("dashboard.signedInAs", { email: session.email })}</p>
-
-      {!session.emailVerified ? (
-        <section
-          role="alert"
-          style={{
-            border: "1px solid #b00020",
-            padding: "1rem",
-            borderRadius: 4,
-          }}
-        >
-          <ResendVerificationForm initialEmail={session.email} />
-        </section>
-      ) : session.workspace ? (
-        <FormsSection
-          workspaceName={session.workspace.name}
-          workspaceRole={session.workspace.role}
-        />
-      ) : (
-        <BootstrapWorkspace />
-      )}
-
-      <p style={{ marginTop: 24 }}>
+    <>
+      <AppNav>
         <SignOutButton />
-      </p>
-    </main>
+      </AppNav>
+      <main style={page}>
+        <h1 style={h1}>{t("dashboard.title")}</h1>
+        <p style={muted}>{t("dashboard.signedInAs", { email: session.email })}</p>
+
+        {!session.emailVerified ? (
+          <Alert kind="warning">
+            <ResendVerificationForm initialEmail={session.email} />
+          </Alert>
+        ) : session.workspace ? (
+          <FormsSection
+            workspaceName={session.workspace.name}
+            workspaceRole={session.workspace.role}
+          />
+        ) : (
+          <BootstrapWorkspace />
+        )}
+      </main>
+    </>
   );
 }
 
@@ -81,36 +77,68 @@ async function FormsSection(props: {
   workspaceName: string;
   workspaceRole: string;
 }) {
-  const page = await listForms();
-  const forms = page?.forms ?? [];
+  const pageData = await listForms();
+  const forms = pageData?.forms ?? [];
 
   return (
-    <section>
-      <p>
-        <strong>{t("dashboard.workspace.label")}:</strong> {props.workspaceName}{" "}
-        <span style={{ color: "#555" }}>({props.workspaceRole})</span>
-      </p>
-      <h2>{t("dashboard.forms.title")}</h2>
-      <p>
+    <section style={{ ...stack("0.9rem"), marginTop: "1.5rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "0.75rem",
+        }}
+      >
+        <h2 style={{ ...h2, margin: 0 }}>{t("dashboard.forms.title")}</h2>
         <NewFormButton />
+      </div>
+      <p style={small}>
+        <strong>{t("dashboard.workspace.label")}:</strong> {props.workspaceName}{" "}
+        <span style={{ color: C.muted }}>({props.workspaceRole})</span>
       </p>
 
       {forms.length === 0 ? (
-        <p>{t("dashboard.forms.empty")}</p>
+        <EmptyState>{t("dashboard.forms.empty")}</EmptyState>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.6rem",
+          }}
+        >
           {forms.map((form) => (
             <li
               key={form.id}
-              style={{ padding: "0.5rem 0", borderTop: "1px solid #eee" }}
+              style={{
+                background: C.white,
+                border: `1px solid ${C.border}`,
+                borderRadius: "10px",
+                padding: "0.8rem 1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: "0.6rem",
+              }}
             >
-              <div>
-                <Link href={`/dashboard/forms/${form.id}`}>{form.name}</Link>{" "}
-                <span style={{ color: "#555" }}>
+              <div style={{ minWidth: 0 }}>
+                <Link
+                  href={`/dashboard/forms/${form.id}`}
+                  style={{ ...link, fontWeight: 600, textDecoration: "none" }}
+                >
+                  {form.name}
+                </Link>
+                <div style={{ ...small, marginTop: "0.1rem" }}>
                   {t("dashboard.forms.createdAt", {
-                    date: new Date(form.createdAt).toISOString(),
+                    date: formatReceivedAt(form.createdAt),
                   })}
-                </span>
+                </div>
               </div>
               <RenameForm formId={form.id} currentName={form.name} />
             </li>

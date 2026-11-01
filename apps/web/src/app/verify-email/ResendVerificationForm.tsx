@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { t } from "@form/i18n";
-import { Alert, btn, fieldLabel, input } from "../../../lib/ui";
+import { Alert, btn, fieldLabel, input } from "../../lib/ui";
 
 /**
  * Resend-verification prompt — the spec's "dashboard shows a

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { t } from "@form/i18n";
 import { createDashboardForm } from "../../lib/forms-client";
+import { btn } from "../../lib/ui";
 
 /**
  * "New form" trigger (ticket 06). A CLIENT component by design: creation is a
@@ -31,11 +32,11 @@ export default function NewFormButton() {
 
   return (
     <>
-      <button type="button" onClick={onCreate} disabled={busy}>
+      <button type="button" onClick={onCreate} disabled={busy} style={btn("primary")}>
         {busy ? t("dashboard.forms.creating") : t("dashboard.forms.newForm")}
       </button>
       {failed ? (
-        <span role="alert" style={{ color: "#b00020" }}>
+        <span role="alert" style={{ color: "#b00020", fontSize: "0.9rem" }}>
           {t("dashboard.forms.createFailed")}
         </span>
       ) : null}
