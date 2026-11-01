@@ -16,6 +16,12 @@ import { Client } from "pg";
  *   fn_owner`) without superuser.
  * - Idempotent: safe to re-run; missing objects are created, existing ones are
  *   aligned (passwords refreshed, schema ownership corrected).
+ * - Works on non-superuser admins (e.g. Neon's project owner): under PG-16+
+ *   CREATEROLE semantics the admin holds ADMIN OPTION on roles it creates but
+ *   no implicit membership, and `CREATE SCHEMA ... AUTHORIZATION` /
+ *   `ALTER SCHEMA ... OWNER TO` need SET ROLE on the target owner. The admin
+ *   therefore grants itself membership in the login roles first (no-op when
+ *   already a member or when running as a true superuser).
  */
 
 export interface BootstrapOptions {
@@ -84,30 +90,59 @@ export async function bootstrapDatabase(
       fn_owner: undefined,
     };
 
-    const existing = await admin.query<{ rolname: string }>(
-      "SELECT rolname FROM pg_roles WHERE rolname = ANY($1::text[])",
+    const existing = await admin.query<{
+      rolname: string;
+      rolcanlogin: boolean;
+      rolsuper: boolean;
+      rolbypassrls: boolean;
+    }>(
+      "SELECT rolname, rolcanlogin, rolsuper, rolbypassrls FROM pg_roles WHERE rolname = ANY($1::text[])",
       [ROLES.map((r) => r.name)],
     );
-    const existingNames = new Set(existing.rows.map((r) => r.rolname));
+    const attrsByName = new Map(existing.rows.map((r) => [r.rolname, r]));
 
     for (const role of ROLES) {
-      const roleOptions =
-        "NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS" +
-        (role.login ? " LOGIN" : " NOLOGIN");
-      const passwordClause = role.login
-        ? ` PASSWORD ${literal(passwords[role.name] ?? "")}`
-        : "";
-      if (!existingNames.has(role.name)) {
+      const current = attrsByName.get(role.name);
+      if (!current) {
+        const roleOptions =
+          "NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS" +
+          (role.login ? " LOGIN" : " NOLOGIN");
+        const passwordClause = role.login
+          ? ` PASSWORD ${literal(passwords[role.name] ?? "")}`
+          : "";
         await admin.query(
           `CREATE ROLE ${ident(role.name)} WITH ${roleOptions}${passwordClause}`,
         );
         summary.createdRoles.push(role.name);
-      } else {
-        await admin.query(
-          `ALTER ROLE ${ident(role.name)} WITH ${roleOptions}${passwordClause}`,
-        );
-        summary.alignedRoles.push(role.name);
+        continue;
       }
+      // Alignment on an existing role may only touch properties the running
+      // admin is allowed to change. Managed Postgres admins (e.g. Neon's
+      // project owner) are CREATEROLE but not superuser, and PG 14+ rejects
+      // `ALTER ROLE ... NOSUPERUSER`/`... NOBYPASSRLS` from non-superusers —
+      // even when the role already has those attributes. Superuser-only
+      // attributes cannot have drifted (only a superuser could have changed
+      // them), so alignment covers LOGIN and the password.
+      const clauses: string[] = [];
+      if (current.rolcanlogin !== role.login) {
+        clauses.push(role.login ? "LOGIN" : "NOLOGIN");
+      }
+      if (role.login) clauses.push(`PASSWORD ${literal(passwords[role.name] ?? "")}`);
+      if (clauses.length > 0) {
+        await admin.query(`ALTER ROLE ${ident(role.name)} WITH ${clauses.join(" ")}`);
+      }
+      // Existing roles are always reported as aligned, even when nothing had
+      // to change (e.g. fn_owner on a persistent cluster).
+      summary.alignedRoles.push(role.name);
+    }
+
+    // PG-16+: owning things as another role requires SET ROLE on it, and a
+    // CREATEROLE (non-superuser) admin no longer inherits membership in the
+    // roles it created. Grant the current admin user membership in each login
+    // role so the schema statements below work on managed Postgres (Neon).
+    for (const role of ROLES) {
+      if (!role.login) continue;
+      await admin.query(`GRANT ${ident(role.name)} TO current_user WITH SET TRUE`);
     }
 
     for (const schema of SCHEMAS) {
