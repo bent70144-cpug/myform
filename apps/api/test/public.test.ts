@@ -190,6 +190,21 @@ describe("GET /v1/public/forms/{slug}", () => {
     expect(res.body.schema.blocks[0].label).toContain("<b>bold</b>");
   });
 
+  it("rejects a cookie-less POST on the read path — the exemption is GET/HEAD only", async () => {
+    const { slug } = await publishedForm("pub-post");
+
+    // No Origin header: a mutation-shaped request on the public read path
+    // must fall through to the normal Origin check (review round 3 — the
+    // allowlist must never widen into a mutation bypass).
+    const res = await request(app).post(`/v1/public/forms/${slug}`).send();
+    expect(res.status).toBe(403);
+    expect(res.headers["content-type"]).toContain("application/problem+json");
+    expect(res.body.code).toBe("origin_mismatch");
+
+    // GET on the same path without Origin still passes.
+    await getPublic(slug, { origin: null }).expect(200);
+  });
+
   it("unpublished forms read closed (200), not 404 — with no-store", async () => {
     const user = await newWorkspaceUser("pub-closed");
     const form = (await createForm(user.cookie)).body as FormDetail;

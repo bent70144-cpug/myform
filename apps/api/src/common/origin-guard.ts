@@ -17,9 +17,10 @@ import { sendProblem } from "./problem";
  *   exemption — a bootstrap-shaped call from 127.0.0.1 without an Origin is
  *   rejected exactly like a cross-site call.
  * - The only exemptions are the explicit cookie-less public-route allowlist
- *   below (token-based email-verification link, future public session
- *   creation and submit). Exempted routes must never read the auth cookie;
- *   the suite asserts that behavior.
+ *   below (token-based email-verification link, public session creation and
+ *   submit). Exempted routes must never read the auth cookie; the suite
+ *   asserts that behavior. The public form READ path is exempt for GET/HEAD
+ *   only — mutations on it still require a matching Origin.
  */
 export const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
@@ -46,22 +47,33 @@ export const PUBLIC_FORM_SESSION_RE = /^\/v1\/public\/forms\/[^/]+\/sessions$/;
 
 /**
  * Public form render path (ticket 09): /v1/public/forms/{slug} — cookie-less
- * and UNauthenticated. GET is already exempt as a safe method; the entry makes
- * the whole path's cookie-less contract explicit (a future password gate may
- * POST here) and keeps the public allowlist reviewable in one place.
+ * and UNauthenticated. The exemption is deliberately READ-ONLY: it applies to
+ * GET/HEAD only (isExemptFromOriginCheck), so POST/PUT/PATCH/DELETE on this
+ * path fall through to the normal Origin check — the allowlist must never
+ * widen into a mutation bypass. Keeps the public allowlist reviewable in one
+ * place.
  */
 export const PUBLIC_FORM_READ_RE = /^\/v1\/public\/forms\/[^/]+$/;
 
-export function isExemptFromOriginCheck(pathname: string): boolean {
-  return (
+/** Methods the read-path exemption covers (strictly reads — no OPTIONS here;
+ *  OPTIONS is already safe via SAFE_METHODS). */
+const READ_METHODS = new Set(["GET", "HEAD"]);
+
+export function isExemptFromOriginCheck(
+  method: string,
+  pathname: string,
+): boolean {
+  if (
     ORIGIN_EXEMPT_PATHS.includes(pathname) ||
-    PUBLIC_FORM_SESSION_RE.test(pathname) ||
-    PUBLIC_FORM_READ_RE.test(pathname)
-  );
+    PUBLIC_FORM_SESSION_RE.test(pathname)
+  ) {
+    return true;
+  }
+  return PUBLIC_FORM_READ_RE.test(pathname) && READ_METHODS.has(method);
 }
 
 export function isOriginRequired(method: string, pathname: string): boolean {
-  return !SAFE_METHODS.has(method) && !isExemptFromOriginCheck(pathname);
+  return !SAFE_METHODS.has(method) && !isExemptFromOriginCheck(method, pathname);
 }
 
 /**
