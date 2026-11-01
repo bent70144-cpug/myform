@@ -57,7 +57,12 @@ export default function ForgotPasswordForm() {
   if (sentTo !== null) {
     return (
       <AuthShell title={t("auth.forgotPassword.sentTitle")}>
-        <Alert kind="info">{t("auth.enumerationSafeResponse", { email: sentTo })}</Alert>
+        {/* Swapped in after submit — role=status (not the info default
+            "note", which is not a live region) so screen readers announce
+            the confirmation. */}
+        <Alert kind="info" role="status">
+          {t("auth.enumerationSafeResponse", { email: sentTo })}
+        </Alert>
         <div style={{ marginTop: "1rem", textAlign: "center" }}>
           <a href="/sign-in" style={btn("secondary")}>
             {t("auth.forgotPassword.backToSignIn")}

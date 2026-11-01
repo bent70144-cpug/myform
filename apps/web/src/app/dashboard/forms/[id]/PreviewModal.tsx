@@ -62,6 +62,7 @@ export default function PreviewModal(props: {
       onClose={props.onClose}
       title={t("dashboard.builder.preview.title")}
       width={760}
+      closeLabel={t("common.close")}
     >
       {/* Draft hint + status badge (same neutral pill the status line uses). */}
       <div style={{ ...row, alignItems: "flex-start", marginBottom: "0.75rem" }}>

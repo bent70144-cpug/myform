@@ -176,6 +176,9 @@ export function Modal(props: {
       onClick={(event) => {
         if (event.target === event.currentTarget) props.onClose();
       }}
+      // The backdrop animates too, so it must opt into the reduced-motion
+      // guard (the panel below carries the same class).
+      className="ui-overlay-anim"
       style={{
         position: "fixed",
         inset: 0,

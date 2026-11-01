@@ -17,23 +17,6 @@ import {
   softCard,
 } from "../../../../../../lib/ui";
 
-/**
- * Visually hidden (screen-reader-only) text — the standard absolute+clip
- * pattern. Used for the Question/Answer caption row inside each pair card
- * so the pairing stays self-describing without visual clutter.
- */
-const srOnly: CSSProperties = {
-  position: "absolute",
-  width: "1px",
-  height: "1px",
-  padding: 0,
-  margin: "-1px",
-  overflow: "hidden",
-  clip: "rect(0, 0, 0, 0)",
-  whiteSpace: "nowrap",
-  border: 0,
-};
-
 /** The question term inside a pair card (heading-like). */
 const term: CSSProperties = {
   fontWeight: 600,
@@ -50,11 +33,9 @@ const term: CSSProperties = {
  * renders the pairs in the order the pinned schema ordered them. Each pair
  * is a card: the question as the dt term (italic+muted when the label is
  * gone from the pinned schema — "Unknown question"), and the answer in a
- * soft inset panel (`softCard`, pre-wrap so line breaks survive).
- * Screen-reader-only Question/Answer captions (i18n
- * `dashboard.inbox.questionHeading` / `dashboard.inbox.answerHeading`) keep
- * every card self-describing while the UI stays calm.
- *
+ * soft inset panel (`softCard`, pre-wrap so line breaks survive). Each div
+ * group holds ONLY its dt/dd — axe's definition-list rule (serious) rejects
+ * any other element inside a dl group, so caption spans are not an option.
  * Labels and answers arrive as plain text and render as ESCAPED plain text
  * (React text nodes — no dangerouslySetInnerHTML anywhere in the inbox).
  *
@@ -127,9 +108,6 @@ export default async function SubmissionDetailPage(props: {
                 margin: 0,
               }}
             >
-              <span style={srOnly}>
-                {t("dashboard.inbox.questionHeading")}
-              </span>
               <dt
                 style={
                   pair.label !== null
@@ -141,7 +119,6 @@ export default async function SubmissionDetailPage(props: {
                   ? pair.label
                   : t("dashboard.inbox.unknownQuestion")}
               </dt>
-              <span style={srOnly}>{t("dashboard.inbox.answerHeading")}</span>
               <dd
                 style={{
                   ...softCard,

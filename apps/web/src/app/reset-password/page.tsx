@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { t } from "@form/i18n";
-import { AuthShell, PulseDot } from "../../lib/ui";
+import { AuthShell, C, PulseDot } from "../../lib/ui";
 import ResetPasswordForm from "./ResetPasswordForm";
 
 /**
@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <AuthShell title={t("auth.resetPassword.title")}>
-          <p role="status" style={{ color: "#555555", margin: 0 }}>
+          <p role="status" style={{ color: C.muted, margin: 0 }}>
             <PulseDot />
             {t("common.loading")}
           </p>

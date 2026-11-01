@@ -22,6 +22,13 @@ const GLOBAL_CSS = `
 *, *::before, *::after { box-sizing: border-box; }
 :focus-visible { outline: 2px solid #1f2937; outline-offset: 2px; }
 @keyframes uiPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 `;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

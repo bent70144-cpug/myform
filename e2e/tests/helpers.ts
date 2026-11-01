@@ -123,8 +123,10 @@ export async function signIn(
   password: string,
 ): Promise<void> {
   await page.goto("/sign-in");
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password").fill(password);
+  // exact: the show/hide-password toggle's aria-label ("Show password")
+  // contains "password" — substring matching would hit two elements.
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL("**/dashboard");
 }
