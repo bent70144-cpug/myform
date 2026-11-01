@@ -8,10 +8,10 @@
 
 **Status:** done
 
-- [x] The one-time admin bootstrap script has run on Neon and created the schemas and the `migrator`, `app_user`, `worker_user`, and NOLOGIN `fn_owner` roles. No role password appears in a migration file, and the migrator password is absent from Render's runtime environment.
-- [x] GitHub Actions ran the migrations as `migrator` before triggering the Render deploy; Render auto-deploy on push is disabled, and the migrator URL exists only as a GitHub Actions secret, not in Render's runtime environment. The app connects as `app_user`, the worker as `worker_user`, and security-definer functions are owned by `fn_owner`.
-- [x] The HTTPS email adapter wired in ticket 03 works; verification and password reset succeed without Mailpit. The provider sandbox may deliver only to the owner's address during development.
-- [x] Before the first outside tester, a sending domain is owned and verified with the email provider (roughly $10/year; confirm current pricing); `onrender.com` cannot be verified as a sender domain.
+- [ ] The one-time admin bootstrap script has run on Neon and created the schemas and the `migrator`, `app_user`, `worker_user`, and NOLOGIN `fn_owner` roles. No role password appears in a migration file, and the migrator password is absent from Render's runtime environment.
+- [ ] GitHub Actions ran the migrations as `migrator` before triggering the Render deploy; Render auto-deploy on push is disabled, and the migrator URL exists only as a GitHub Actions secret, not in Render's runtime environment. The app connects as `app_user`, the worker as `worker_user`, and security-definer functions are owned by `fn_owner`.
+- [ ] The HTTPS email adapter wired in ticket 03 works; verification and password reset succeed without Mailpit. The provider sandbox may deliver only to the owner's address during development.
+- [ ] Before the first outside tester, a sending domain is owned and verified with the email provider (roughly $10/year; confirm current pricing); `onrender.com` cannot be verified as a sender domain.
 - [ ] A live signup → create form → publish → submit → review run completes on the alpha.
 - [ ] Cold-start behavior is measured, including the authenticated SSR session hop.
 - [x] The supervisor passes each child an explicit allowlisted environment. A test asserts the Next process environment contains no `DATABASE_URL`, auth secret, or migrator URL. This is process-level separation only; real service isolation arrives at the beta split.
@@ -29,3 +29,7 @@
   - `supervisor.mjs`: pg boot runs the real `tsx/dist/cli.mjs` entry (the `.bin/tsx` sh shim cannot be executed via `process.execPath`).
 - Live-alpha items (the two unchecked boxes) need real Neon/Render/email-provider credentials — this sandbox cannot reach them; the runbook carries the exact steps (ADR-0001: code + CI + runbook now, live run when credentials exist).
 - Verification at close: smoke 12/12; api 198/198, web 113/113, db 68/68, contracts 18/18, form-schema 82/82, queue 18/18, supervisor allowlist 11/11.
+
+## Comments
+
+**2026-11-01 (orchestrator):** Review round-3 landed (stray `wt/t12` gitlink removed, worker redacting logger, hourly `session.purge` worker job wiring `purge_expired_sessions()`, origin-guard read exemption narrowed to GET/HEAD). Authoritative deploy runbook: `docs/runbooks/alpha-deploy.md` (P1-P9 pending-user checklist: Neon project + admin bootstrap, GH Actions secrets `MIGRATOR_DATABASE_URL`/`RENDER_DEPLOY_HOOK_URL`, Render service with auto-deploy OFF, Resend sending-domain verification, live smoke + cold-start measurement). Local verification: smoke 12/12, e2e 8/8, suite green (api 205, web 113, db 69, form-schema 82, worker 21, queue 18, config 41, contracts 18, auth 16). The two open checkboxes are human-only (credentials) — see runbook.
