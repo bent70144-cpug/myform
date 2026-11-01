@@ -1,0 +1,30 @@
+{
+  "name": "@myform/worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Background worker: pg-boss queue consumer with a logged heartbeat",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "start": "node dist/main.js",
+    "dev": "node --watch dist/main.js"
+  },
+  "dependencies": {
+    "@myform/config": "workspace:*",
+    "@myform/logger": "workspace:*",
+    "@myform/queue": "workspace:*",
+    "pg-boss": "12.38.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@myform/db": "workspace:*",
+    "@types/node": "26.6.6",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}
