@@ -1,0 +1,30 @@
+{
+  "name": "@myform/queue",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JobQueue port and pg-boss adapter (migrate:false; DDL owned by the migrator)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@myform/logger": "workspace:*",
+    "pg-boss": "12.38.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@myform/config": "workspace:*",
+    "@myform/db": "workspace:*",
+    "@types/node": "26.6.6",
+    "@types/pg": "8.23.1",
+    "eslint": "9.39.5",
+    "pg": "8.23.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}
