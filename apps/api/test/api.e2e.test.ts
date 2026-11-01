@@ -55,6 +55,7 @@ describe("GET /v1/health", () => {
     const res = await fetch(`${baseUrl}/v1/health`);
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("application/json");
+    expect(res.headers.get("cache-control")).toBe("no-store");
     const body = (await res.json()) as { status: string; checks: { database: string }; service: string };
     expect(body).toEqual({ status: "ok", checks: { database: "up" }, service: "api" });
   });
@@ -95,6 +96,7 @@ describe("Problem Details filter", () => {
     const res = await fetch(`${baseUrl}/v1/definitely-not-a-route`);
     expect(res.status).toBe(404);
     expect(res.headers.get("content-type")).toContain("application/problem+json");
+    expect(res.headers.get("cache-control")).toBe("no-store");
     const body = (await res.json()) as {
       type: string;
       title: string;

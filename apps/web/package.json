@@ -1,0 +1,33 @@
+{
+  "name": "@myform/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js dashboard + public form renderer; /v1/* rewrite to the internal API",
+  "scripts": {
+    "build": "next build",
+    "typecheck": "next typegen && tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@myform/config": "workspace:*",
+    "@myform/contracts": "workspace:*",
+    "@myform/i18n": "workspace:*",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@myform/db": "workspace:*",
+    "@types/node": "26.6.6",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}

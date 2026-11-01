@@ -60,6 +60,6 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       status = body.status;
     }
 
-    res.status(status).type(PROBLEM_CONTENT_TYPE).json(body);
+    res.status(status).type(PROBLEM_CONTENT_TYPE).header("Cache-Control", "no-store").json(body);
   }
 }

@@ -4,6 +4,19 @@ const deploymentEnv = z.enum(["development", "test", "production"]).default("dev
 const logLevel = z.enum(["debug", "info", "warn", "error"]).default("info");
 const port = z.coerce.number().int().min(1).max(65535);
 
+/** Keep only the named keys from a raw environment, dropping undefined. */
+function pickEnvByKeys(
+  keys: readonly string[],
+  source: Record<string, string | undefined>,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const key of keys) {
+    const value = source[key];
+    if (value !== undefined) result[key] = value;
+  }
+  return result;
+}
+
 /**
  * API (NestJS) environment. The API owns database access for request
  * handling, so it receives the pooled app_user `DATABASE_URL`.
@@ -21,6 +34,15 @@ export const apiEnvSchema = z
 export type ApiEnv = z.output<typeof apiEnvSchema>;
 
 /**
+ * Filter a raw process environment down to the API allowlist before
+ * validation: OS/shell noise (PATH, NODE_ENV, ...) is ignored, while the
+ * strict schema still fails on missing or invalid required values.
+ */
+export function pickApiEnv(source: Record<string, string | undefined>): Record<string, string> {
+  return pickEnvByKeys(Object.keys(apiEnvSchema.shape), source);
+}
+
+/**
  * Worker environment. The worker connects as `worker_user` over a direct
  * URL; it never receives the web origin or auth secrets.
  */
@@ -34,6 +56,11 @@ export const workerEnvSchema = z
   .strict();
 
 export type WorkerEnv = z.output<typeof workerEnvSchema>;
+
+/** Filter a raw environment down to the worker allowlist (see pickApiEnv). */
+export function pickWorkerEnv(source: Record<string, string | undefined>): Record<string, string> {
+  return pickEnvByKeys(Object.keys(workerEnvSchema.shape), source);
+}
 
 /**
  * Web (Next.js) environment definition. This is the whole point of a
@@ -70,3 +97,13 @@ export const FORBIDDEN_WEB_ENV_KEYS = [
 
 /** Keys accepted by the web env definition (allowlist source of truth). */
 export const WEB_ENV_KEYS = Object.keys(webEnvSchema.shape);
+
+/**
+ * Filter a raw environment down to the web allowlist. The web process
+ * loads its config through this: unknown keys (a real shell env has
+ * dozens) are ignored, and credential keys are dropped, matching the
+ * supervisor's process-level allowlist.
+ */
+export function pickWebEnv(source: Record<string, string | undefined>): Record<string, string> {
+  return pickEnvByKeys(WEB_ENV_KEYS, source);
+}

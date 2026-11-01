@@ -20,6 +20,8 @@ export class HealthController {
   async check(@Res({ passthrough: true }) res: Response): Promise<HealthResponse> {
     const database = await this.health.databaseStatus();
     const { ok, body } = healthResponse({ database, service: "api" });
+    // API responses are never cached until an explicit purge story exists.
+    res.setHeader("Cache-Control", "no-store");
     if (!ok) {
       res.status(503);
     }
