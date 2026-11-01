@@ -1,10 +1,12 @@
 # myform
 
+Form platform — monorepo (pnpm + Turborepo): Next.js web, NestJS API, worker, and shared packages. Spec: `spec.md` (repo root). Deploy: `docs/runbooks/alpha-deploy.md`.
+
 ## Agent skills
 
 ### Issue tracker
 
-Issues live as local markdown files under `.scratch/<feature>/` in this repo. See `docs/agents/issue-tracker.md`.
+Issues live as local markdown files, one per ticket, at `issues/NN-slug.md` in this repo (the M0 spec is `spec.md` at the root). Tickets carry a `**Status:**` line and a `Blocked by:` line; conversation history appends under `## Comments`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

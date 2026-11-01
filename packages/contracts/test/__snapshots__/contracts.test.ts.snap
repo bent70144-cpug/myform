@@ -1,0 +1,4482 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`openapi document > matches the committed snapshot 1`] = `
+{
+  "components": {
+    "schemas": {
+      "CreateFormResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string",
+          },
+          "draft": {
+            "additionalProperties": false,
+            "properties": {
+              "draftVersion": {
+                "minimum": 0,
+                "type": "integer",
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "blocks": {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "type": "string",
+                            },
+                            "kind": {
+                              "enum": [
+                                "welcome",
+                              ],
+                              "type": "string",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "title",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "short_text",
+                              ],
+                              "type": "string",
+                            },
+                            "label": {
+                              "type": "string",
+                            },
+                            "placeholder": {
+                              "type": "string",
+                            },
+                            "required": {
+                              "type": "boolean",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "label",
+                            "required",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "long_text",
+                              ],
+                              "type": "string",
+                            },
+                            "label": {
+                              "type": "string",
+                            },
+                            "placeholder": {
+                              "type": "string",
+                            },
+                            "required": {
+                              "type": "boolean",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "label",
+                            "required",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "ending",
+                              ],
+                              "type": "string",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "title",
+                          ],
+                          "type": "object",
+                        },
+                      ],
+                    },
+                    "type": "array",
+                  },
+                  "logic": {
+                    "items": {
+                      "additionalProperties": {},
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  "schemaVersion": {
+                    "enum": [
+                      1,
+                    ],
+                    "type": "number",
+                  },
+                  "settings": {
+                    "additionalProperties": {},
+                    "type": "object",
+                  },
+                  "theme": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "preset": {
+                        "enum": [
+                          "default",
+                        ],
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "preset",
+                    ],
+                    "type": "object",
+                  },
+                  "title": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "schemaVersion",
+                  "title",
+                  "blocks",
+                  "logic",
+                  "theme",
+                  "settings",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "draftVersion",
+              "schema",
+            ],
+            "type": "object",
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+          },
+          "projectId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "publishedVersionNumber": {
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer",
+          },
+          "slug": {
+            "nullable": true,
+            "pattern": "^[A-Za-z0-9]{10}$",
+            "type": "string",
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "closed",
+            ],
+            "type": "string",
+          },
+          "updatedAt": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt",
+          "projectId",
+          "draft",
+        ],
+        "type": "object",
+      },
+      "DraftSaveResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "draftVersion": {
+            "minimum": 1,
+            "type": "integer",
+          },
+        },
+        "required": [
+          "draftVersion",
+        ],
+        "type": "object",
+      },
+      "FormDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string",
+          },
+          "draft": {
+            "additionalProperties": false,
+            "properties": {
+              "draftVersion": {
+                "minimum": 0,
+                "type": "integer",
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "blocks": {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "type": "string",
+                            },
+                            "kind": {
+                              "enum": [
+                                "welcome",
+                              ],
+                              "type": "string",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "title",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "short_text",
+                              ],
+                              "type": "string",
+                            },
+                            "label": {
+                              "type": "string",
+                            },
+                            "placeholder": {
+                              "type": "string",
+                            },
+                            "required": {
+                              "type": "boolean",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "label",
+                            "required",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "long_text",
+                              ],
+                              "type": "string",
+                            },
+                            "label": {
+                              "type": "string",
+                            },
+                            "placeholder": {
+                              "type": "string",
+                            },
+                            "required": {
+                              "type": "boolean",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "label",
+                            "required",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "ending",
+                              ],
+                              "type": "string",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "title",
+                          ],
+                          "type": "object",
+                        },
+                      ],
+                    },
+                    "type": "array",
+                  },
+                  "logic": {
+                    "items": {
+                      "additionalProperties": {},
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  "schemaVersion": {
+                    "enum": [
+                      1,
+                    ],
+                    "type": "number",
+                  },
+                  "settings": {
+                    "additionalProperties": {},
+                    "type": "object",
+                  },
+                  "theme": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "preset": {
+                        "enum": [
+                          "default",
+                        ],
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "preset",
+                    ],
+                    "type": "object",
+                  },
+                  "title": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "schemaVersion",
+                  "title",
+                  "blocks",
+                  "logic",
+                  "theme",
+                  "settings",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "draftVersion",
+              "schema",
+            ],
+            "type": "object",
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+          },
+          "projectId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "publishedVersionNumber": {
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer",
+          },
+          "slug": {
+            "nullable": true,
+            "pattern": "^[A-Za-z0-9]{10}$",
+            "type": "string",
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "closed",
+            ],
+            "type": "string",
+          },
+          "updatedAt": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt",
+          "projectId",
+          "draft",
+        ],
+        "type": "object",
+      },
+      "FormSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string",
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "closed",
+            ],
+            "type": "string",
+          },
+          "updatedAt": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt",
+        ],
+        "type": "object",
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "db": {
+            "type": "boolean",
+          },
+          "status": {
+            "enum": [
+              "ok",
+            ],
+            "type": "string",
+          },
+        },
+        "required": [
+          "status",
+          "db",
+        ],
+        "type": "object",
+      },
+      "ListFormsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "forms": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                },
+                "id": {
+                  "format": "uuid",
+                  "type": "string",
+                },
+                "name": {
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string",
+                },
+                "status": {
+                  "enum": [
+                    "draft",
+                    "published",
+                    "closed",
+                  ],
+                  "type": "string",
+                },
+                "updatedAt": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "id",
+                "name",
+                "status",
+                "createdAt",
+                "updatedAt",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "nextCursor": {
+            "nullable": true,
+            "type": "string",
+          },
+        },
+        "required": [
+          "forms",
+          "nextCursor",
+        ],
+        "type": "object",
+      },
+      "ListSubmissionsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "nextCursor": {
+            "nullable": true,
+            "type": "string",
+          },
+          "submissions": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "createdAt": {
+                  "type": "string",
+                },
+                "formVersionNumber": {
+                  "minimum": 1,
+                  "type": "integer",
+                },
+                "id": {
+                  "format": "uuid",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "id",
+                "createdAt",
+                "formVersionNumber",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "required": [
+          "submissions",
+          "nextCursor",
+        ],
+        "type": "object",
+      },
+      "ProblemDetails": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+          },
+          "detail": {
+            "type": "string",
+          },
+          "errors": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string",
+                },
+                "message": {
+                  "type": "string",
+                },
+                "path": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "path",
+                "code",
+                "message",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "status": {
+            "type": "integer",
+          },
+          "title": {
+            "type": "string",
+          },
+          "type": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+        ],
+        "type": "object",
+      },
+      "PublicFormResponse": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "formId": {
+                "format": "uuid",
+                "type": "string",
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "blocks": {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "type": "string",
+                            },
+                            "kind": {
+                              "enum": [
+                                "welcome",
+                              ],
+                              "type": "string",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "title",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/anyOf/0/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "short_text",
+                              ],
+                              "type": "string",
+                            },
+                            "label": {
+                              "type": "string",
+                            },
+                            "placeholder": {
+                              "type": "string",
+                            },
+                            "required": {
+                              "type": "boolean",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "label",
+                            "required",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/anyOf/0/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "long_text",
+                              ],
+                              "type": "string",
+                            },
+                            "label": {
+                              "type": "string",
+                            },
+                            "placeholder": {
+                              "type": "string",
+                            },
+                            "required": {
+                              "type": "boolean",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "label",
+                            "required",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                            },
+                            "id": {
+                              "$ref": "#/anyOf/0/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                            },
+                            "kind": {
+                              "enum": [
+                                "ending",
+                              ],
+                              "type": "string",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "title",
+                          ],
+                          "type": "object",
+                        },
+                      ],
+                    },
+                    "type": "array",
+                  },
+                  "logic": {
+                    "items": {
+                      "additionalProperties": {},
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  "schemaVersion": {
+                    "enum": [
+                      1,
+                    ],
+                    "type": "number",
+                  },
+                  "settings": {
+                    "additionalProperties": {},
+                    "type": "object",
+                  },
+                  "theme": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "preset": {
+                        "enum": [
+                          "default",
+                        ],
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "preset",
+                    ],
+                    "type": "object",
+                  },
+                  "title": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "schemaVersion",
+                  "title",
+                  "blocks",
+                  "logic",
+                  "theme",
+                  "settings",
+                ],
+                "type": "object",
+              },
+              "status": {
+                "enum": [
+                  "published",
+                ],
+                "type": "string",
+              },
+              "versionId": {
+                "format": "uuid",
+                "type": "string",
+              },
+              "versionNumber": {
+                "minimum": 1,
+                "type": "integer",
+              },
+            },
+            "required": [
+              "status",
+              "formId",
+              "versionId",
+              "versionNumber",
+              "schema",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "closed",
+                ],
+                "type": "string",
+              },
+            },
+            "required": [
+              "status",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "canonicalSlug": {
+                "pattern": "^[A-Za-z0-9]{10}$",
+                "type": "string",
+              },
+              "status": {
+                "enum": [
+                  "redirect",
+                ],
+                "type": "string",
+              },
+            },
+            "required": [
+              "status",
+              "canonicalSlug",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "not_found",
+                ],
+                "type": "string",
+              },
+            },
+            "required": [
+              "status",
+            ],
+            "type": "object",
+          },
+        ],
+      },
+      "PublishResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "formId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "publishedAt": {
+            "type": "string",
+          },
+          "slug": {
+            "pattern": "^[A-Za-z0-9]{10}$",
+            "type": "string",
+          },
+          "status": {
+            "enum": [
+              "published",
+            ],
+            "type": "string",
+          },
+          "submissionCapBytes": {
+            "minimum": 0,
+            "type": "integer",
+          },
+          "versionId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "versionNumber": {
+            "minimum": 1,
+            "type": "integer",
+          },
+          "worstCaseBytes": {
+            "minimum": 0,
+            "type": "integer",
+          },
+        },
+        "required": [
+          "formId",
+          "status",
+          "versionId",
+          "versionNumber",
+          "slug",
+          "publishedAt",
+          "worstCaseBytes",
+          "submissionCapBytes",
+        ],
+        "type": "object",
+      },
+      "RenameFormResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string",
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "closed",
+            ],
+            "type": "string",
+          },
+          "updatedAt": {
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt",
+        ],
+        "type": "object",
+      },
+      "SessionCreateResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "expiresAt": {
+            "type": "string",
+          },
+          "pinnedVersionId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "schema": {
+            "additionalProperties": false,
+            "properties": {
+              "blocks": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                        },
+                        "id": {
+                          "type": "string",
+                        },
+                        "kind": {
+                          "enum": [
+                            "welcome",
+                          ],
+                          "type": "string",
+                        },
+                        "title": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "title",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                        },
+                        "id": {
+                          "$ref": "#/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                        },
+                        "kind": {
+                          "enum": [
+                            "short_text",
+                          ],
+                          "type": "string",
+                        },
+                        "label": {
+                          "type": "string",
+                        },
+                        "placeholder": {
+                          "type": "string",
+                        },
+                        "required": {
+                          "type": "boolean",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "label",
+                        "required",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                        },
+                        "id": {
+                          "$ref": "#/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                        },
+                        "kind": {
+                          "enum": [
+                            "long_text",
+                          ],
+                          "type": "string",
+                        },
+                        "label": {
+                          "type": "string",
+                        },
+                        "placeholder": {
+                          "type": "string",
+                        },
+                        "required": {
+                          "type": "boolean",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "label",
+                        "required",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                        },
+                        "id": {
+                          "$ref": "#/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                        },
+                        "kind": {
+                          "enum": [
+                            "ending",
+                          ],
+                          "type": "string",
+                        },
+                        "title": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "title",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+              "logic": {
+                "items": {
+                  "additionalProperties": {},
+                  "type": "object",
+                },
+                "type": "array",
+              },
+              "schemaVersion": {
+                "enum": [
+                  1,
+                ],
+                "type": "number",
+              },
+              "settings": {
+                "additionalProperties": {},
+                "type": "object",
+              },
+              "theme": {
+                "additionalProperties": false,
+                "properties": {
+                  "preset": {
+                    "enum": [
+                      "default",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "preset",
+                ],
+                "type": "object",
+              },
+              "title": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "schemaVersion",
+              "title",
+              "blocks",
+              "logic",
+              "theme",
+              "settings",
+            ],
+            "type": "object",
+          },
+          "token": {
+            "minLength": 16,
+            "type": "string",
+          },
+        },
+        "required": [
+          "token",
+          "expiresAt",
+          "pinnedVersionId",
+          "schema",
+        ],
+        "type": "object",
+      },
+      "SubmissionDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "answers": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "answer": {
+                  "type": "string",
+                },
+                "blockId": {
+                  "type": "string",
+                },
+                "label": {
+                  "nullable": true,
+                  "type": "string",
+                },
+              },
+              "required": [
+                "blockId",
+                "label",
+                "answer",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "createdAt": {
+            "type": "string",
+          },
+          "formVersionNumber": {
+            "minimum": 1,
+            "type": "integer",
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "formVersionNumber",
+          "answers",
+        ],
+        "type": "object",
+      },
+      "SubmitReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "submissionId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "submitted": {
+            "enum": [
+              true,
+            ],
+            "type": "boolean",
+          },
+        },
+        "required": [
+          "submitted",
+          "submissionId",
+        ],
+        "type": "object",
+      },
+      "SubmitRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "answers": {
+            "additionalProperties": {},
+            "type": "object",
+          },
+        },
+        "required": [
+          "answers",
+        ],
+        "type": "object",
+      },
+      "UnpublishResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "formId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "status": {
+            "enum": [
+              "closed",
+            ],
+            "type": "string",
+          },
+        },
+        "required": [
+          "formId",
+          "status",
+        ],
+        "type": "object",
+      },
+      "Workspace": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string",
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "admin",
+              "editor",
+              "viewer",
+            ],
+            "type": "string",
+          },
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "info": {
+    "description": "REST API under /v1. JSON, camelCase, ISO-8601 UTC timestamps. Errors use RFC 9457 Problem Details with a stable code.",
+    "title": "Form API",
+    "version": "0.1.0",
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/auth/session": {
+      "get": {
+        "description": "Returns the signed-in user's id, email, verified flag and the active workspace when one exists; 401 with no detail otherwise. Read-only.",
+        "operationId": "getSession",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                    },
+                    "emailVerified": {
+                      "type": "boolean",
+                    },
+                    "userId": {
+                      "type": "string",
+                    },
+                    "workspace": {
+                      "additionalProperties": false,
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "name": {
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "role": {
+                          "enum": [
+                            "owner",
+                            "admin",
+                            "editor",
+                            "viewer",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "role",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                  "required": [
+                    "userId",
+                    "email",
+                    "emailVerified",
+                    "workspace",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Session (workspace null until bootstrap)",
+          },
+          "401": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+        },
+        "summary": "Minimal session object",
+        "tags": [
+          "auth",
+        ],
+      },
+    },
+    "/v1/forms": {
+      "get": {
+        "description": "Cursor pagination: \`limit\` defaults to 20 and is capped at 100; \`nextCursor\` is null on the last page. Ordered newest first by \`(created_at, id)\`.",
+        "operationId": "listForms",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+            },
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "forms": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "createdAt": {
+                            "type": "string",
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "name": {
+                            "maxLength": 200,
+                            "minLength": 1,
+                            "type": "string",
+                          },
+                          "status": {
+                            "enum": [
+                              "draft",
+                              "published",
+                              "closed",
+                            ],
+                            "type": "string",
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "status",
+                          "createdAt",
+                          "updatedAt",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "nextCursor": {
+                      "nullable": true,
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "forms",
+                    "nextCursor",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "One page of form summaries",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified or no workspace yet (\`forbidden\`)",
+          },
+          "422": {
+            "description": "Invalid pagination parameters (\`validation_failed\`)",
+          },
+        },
+        "summary": "List the active workspace's forms, newest first",
+        "tags": [
+          "forms",
+        ],
+      },
+      "post": {
+        "description": "Runs in the FULL workspace context (active workspace resolved server-side via \`list_workspaces()\`). The default project is found through \`projects.is_default\`, never by name. Also creates the form's mutable draft row (empty envelope, \`draftVersion\` 0) and writes the \`form.created\` audit row and outbox event in the same transaction. Verified email required.",
+        "operationId": "createForm",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+          },
+          "required": false,
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "createdAt": {
+                      "type": "string",
+                    },
+                    "draft": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "draftVersion": {
+                          "minimum": 0,
+                          "type": "integer",
+                        },
+                        "schema": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "blocks": {
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "welcome",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "title": {
+                                        "type": "string",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "title",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "short_text",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "label": {
+                                        "type": "string",
+                                      },
+                                      "placeholder": {
+                                        "type": "string",
+                                      },
+                                      "required": {
+                                        "type": "boolean",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "label",
+                                      "required",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "long_text",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "label": {
+                                        "type": "string",
+                                      },
+                                      "placeholder": {
+                                        "type": "string",
+                                      },
+                                      "required": {
+                                        "type": "boolean",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "label",
+                                      "required",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "ending",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "title": {
+                                        "type": "string",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "title",
+                                    ],
+                                    "type": "object",
+                                  },
+                                ],
+                              },
+                              "type": "array",
+                            },
+                            "logic": {
+                              "items": {
+                                "additionalProperties": {},
+                                "type": "object",
+                              },
+                              "type": "array",
+                            },
+                            "schemaVersion": {
+                              "enum": [
+                                1,
+                              ],
+                              "type": "number",
+                            },
+                            "settings": {
+                              "additionalProperties": {},
+                              "type": "object",
+                            },
+                            "theme": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "preset": {
+                                  "enum": [
+                                    "default",
+                                  ],
+                                  "type": "string",
+                                },
+                              },
+                              "required": [
+                                "preset",
+                              ],
+                              "type": "object",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "schemaVersion",
+                            "title",
+                            "blocks",
+                            "logic",
+                            "theme",
+                            "settings",
+                          ],
+                          "type": "object",
+                        },
+                      },
+                      "required": [
+                        "draftVersion",
+                        "schema",
+                      ],
+                      "type": "object",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "name": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    "projectId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "publishedVersionNumber": {
+                      "minimum": 1,
+                      "nullable": true,
+                      "type": "integer",
+                    },
+                    "slug": {
+                      "nullable": true,
+                      "pattern": "^[A-Za-z0-9]{10}$",
+                      "type": "string",
+                    },
+                    "status": {
+                      "enum": [
+                        "draft",
+                        "published",
+                        "closed",
+                      ],
+                      "type": "string",
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                    "projectId",
+                    "draft",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The created form with its draft (version 0)",
+          },
+          "401": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Email not verified (\`email_unverified\`), Origin mismatch (\`origin_mismatch\`), or no workspace yet (\`forbidden\`)",
+          },
+          "422": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Request body fails the contract (\`validation_failed\`)",
+          },
+        },
+        "summary": "Create a form in the active workspace under the default project",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/forms/{formId}": {
+      "get": {
+        "description": "Returns the form and its draft (envelope + integer \`draftVersion\`). Cross-workspace or unknown ids answer 404 (never 403) to avoid enumeration.",
+        "operationId": "getForm",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "createdAt": {
+                      "type": "string",
+                    },
+                    "draft": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "draftVersion": {
+                          "minimum": 0,
+                          "type": "integer",
+                        },
+                        "schema": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "blocks": {
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "welcome",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "title": {
+                                        "type": "string",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "title",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "short_text",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "label": {
+                                        "type": "string",
+                                      },
+                                      "placeholder": {
+                                        "type": "string",
+                                      },
+                                      "required": {
+                                        "type": "boolean",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "label",
+                                      "required",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "long_text",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "label": {
+                                        "type": "string",
+                                      },
+                                      "placeholder": {
+                                        "type": "string",
+                                      },
+                                      "required": {
+                                        "type": "boolean",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "label",
+                                      "required",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/properties/draft/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "ending",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "title": {
+                                        "type": "string",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "title",
+                                    ],
+                                    "type": "object",
+                                  },
+                                ],
+                              },
+                              "type": "array",
+                            },
+                            "logic": {
+                              "items": {
+                                "additionalProperties": {},
+                                "type": "object",
+                              },
+                              "type": "array",
+                            },
+                            "schemaVersion": {
+                              "enum": [
+                                1,
+                              ],
+                              "type": "number",
+                            },
+                            "settings": {
+                              "additionalProperties": {},
+                              "type": "object",
+                            },
+                            "theme": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "preset": {
+                                  "enum": [
+                                    "default",
+                                  ],
+                                  "type": "string",
+                                },
+                              },
+                              "required": [
+                                "preset",
+                              ],
+                              "type": "object",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "schemaVersion",
+                            "title",
+                            "blocks",
+                            "logic",
+                            "theme",
+                            "settings",
+                          ],
+                          "type": "object",
+                        },
+                      },
+                      "required": [
+                        "draftVersion",
+                        "schema",
+                      ],
+                      "type": "object",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "name": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    "projectId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "publishedVersionNumber": {
+                      "minimum": 1,
+                      "nullable": true,
+                      "type": "integer",
+                    },
+                    "slug": {
+                      "nullable": true,
+                      "pattern": "^[A-Za-z0-9]{10}$",
+                      "type": "string",
+                    },
+                    "status": {
+                      "enum": [
+                        "draft",
+                        "published",
+                        "closed",
+                      ],
+                      "type": "string",
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                    "projectId",
+                    "draft",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The form with its draft",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown id or a form of another workspace (\`not_found\`)",
+          },
+        },
+        "summary": "Read one form with its mutable draft",
+        "tags": [
+          "forms",
+        ],
+      },
+      "patch": {
+        "description": "Changes \`forms.name\` ONLY. The respondent-facing title lives in the draft schema envelope and is edited by the builder (ticket 08).",
+        "operationId": "renameForm",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "createdAt": {
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "name": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    "status": {
+                      "enum": [
+                        "draft",
+                        "published",
+                        "closed",
+                      ],
+                      "type": "string",
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The renamed form summary",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown id or a form of another workspace (\`not_found\`)",
+          },
+          "422": {
+            "description": "Invalid name (\`validation_failed\`)",
+          },
+        },
+        "summary": "Rename the form's dashboard label",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/forms/{formId}/draft": {
+      "put": {
+        "description": "Optimistic concurrency on \`draftVersion\`: the caller sends the last-seen integer; a mismatch answers 409 \`draft_conflict\` instead of overwriting another tab's save, and success increments \`draftVersion\` by 1. The envelope is migrated through the schemaVersion registry and validated by the shared schema engine — structural, limit, ID and NUL failures answer 422 with the engine's stable codes as field errors. The body parser limit for this route is explicitly configured at 300 KB (larger bodies answer 413 before validation).",
+        "operationId": "saveFormDraft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "draftVersion": {
+                    "minimum": 0,
+                    "type": "integer",
+                  },
+                  "schema": {},
+                },
+                "required": [
+                  "draftVersion",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "draftVersion": {
+                      "minimum": 1,
+                      "type": "integer",
+                    },
+                  },
+                  "required": [
+                    "draftVersion",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Draft saved; returns the NEW draft version",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown id or a form of another workspace (\`not_found\`)",
+          },
+          "409": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Stale \`draftVersion\` — another save landed first (\`draft_conflict\`)",
+          },
+          "413": {
+            "description": "Body exceeds the route's configured 300 KB JSON limit",
+          },
+          "422": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Invalid wrapper (\`validation_failed\`) or schema-engine rejections (stable field codes: \`unsupported_schema_version\`, \`invalid_character\`, \`schema_too_large\`, \`too_many_blocks\`, \`duplicate_block_id\`, \`invalid_block_id\`, \`unsupported_block_kind\`, \`unknown_field\`, \`*_too_long\`, ...)",
+          },
+        },
+        "summary": "Replace the form's FULL draft schema atomically",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/forms/{formId}/publish": {
+      "post": {
+        "description": "ONE transaction: locks the form row (SELECT … FOR UPDATE), re-runs the FULL publish validation, allocates the next version number, inserts the immutable form_versions snapshot, updates the published pointer and status to \`published\`, registers the public slug on first publish (\`register_form_slug\`, 10-char base62; reserved words rejected), and writes the \`form.published\` audit row and outbox event. Validation failures answer 422 with the engine's stable codes and persist NOTHING; an injected failure rolls back everything; concurrent publishes serialize on the form row. The first publish allocates the public slug; republishes keep it. Response carries worstCaseBytes/submissionCapBytes so the dashboard can render the publish-time size warning.",
+        "operationId": "publishForm",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "formId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "publishedAt": {
+                      "type": "string",
+                    },
+                    "slug": {
+                      "pattern": "^[A-Za-z0-9]{10}$",
+                      "type": "string",
+                    },
+                    "status": {
+                      "enum": [
+                        "published",
+                      ],
+                      "type": "string",
+                    },
+                    "submissionCapBytes": {
+                      "minimum": 0,
+                      "type": "integer",
+                    },
+                    "versionId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "versionNumber": {
+                      "minimum": 1,
+                      "type": "integer",
+                    },
+                    "worstCaseBytes": {
+                      "minimum": 0,
+                      "type": "integer",
+                    },
+                  },
+                  "required": [
+                    "formId",
+                    "status",
+                    "versionId",
+                    "versionNumber",
+                    "slug",
+                    "publishedAt",
+                    "worstCaseBytes",
+                    "submissionCapBytes",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Published — the immutable version + public slug + size-warning numbers",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified, Origin mismatch, or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown id or a form of another workspace (\`not_found\`)",
+          },
+          "422": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Draft fails publish validation (\`no_question_blocks\`, \`empty_label\`, \`welcome_not_first\`, \`ending_not_last\`, \`duplicate_block_id\`, \`multiple_welcome_blocks\`, \`multiple_ending_blocks\`, limits, ...) — nothing is persisted",
+          },
+        },
+        "summary": "Publish (or republish) the form as a new immutable version",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/forms/{formId}/submissions": {
+      "get": {
+        "description": "Cursor pagination over the inbox list: newest first by \`(created_at, id)\`, default page size 20, maximum 100 (\`limit\` is validated; violations answer 422). Each row carries the received time and the pinned form version number. Unknown or cross-workspace forms answer 404 (never 403) to avoid enumeration — RLS hides the other workspace's rows.",
+        "operationId": "listSubmissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+            },
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "nextCursor": {
+                      "nullable": true,
+                      "type": "string",
+                    },
+                    "submissions": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "createdAt": {
+                            "type": "string",
+                          },
+                          "formVersionNumber": {
+                            "minimum": 1,
+                            "type": "integer",
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "createdAt",
+                          "formVersionNumber",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "submissions",
+                    "nextCursor",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "One page (optionally empty) of submission summaries",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown form or a form of another workspace (\`not_found\`)",
+          },
+          "422": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Invalid \`limit\` or \`cursor\` (\`validation_failed\`)",
+          },
+        },
+        "summary": "List a form's submissions, newest first",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/forms/{formId}/submissions/{submissionId}": {
+      "get": {
+        "description": "Pairs EACH stored answer with its question label taken from the PINNED version's schema (the version the respondent actually saw — never the mutable draft), ordered like the pinned blocks, plus the received time and the form version number. Labels and answers are plain text; the web app renders them escaped. Unknown submission, a submission of another form, or a cross-workspace resource answers 404 (never 403).",
+        "operationId": "getSubmission",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+          {
+            "in": "path",
+            "name": "submissionId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "answers": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "answer": {
+                            "type": "string",
+                          },
+                          "blockId": {
+                            "type": "string",
+                          },
+                          "label": {
+                            "nullable": true,
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "blockId",
+                          "label",
+                          "answer",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "createdAt": {
+                      "type": "string",
+                    },
+                    "formVersionNumber": {
+                      "minimum": 1,
+                      "type": "integer",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "formVersionNumber",
+                    "answers",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The submission detail with answer/label pairs",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown submission or one belonging to another workspace (\`not_found\`)",
+          },
+        },
+        "summary": "Read one submission with labels from the pinned version",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/forms/{formId}/unpublish": {
+      "post": {
+        "description": "Sets the form status to \`closed\` and writes the \`form.unpublished\` audit row and outbox event in the same transaction. Republishing reopens the form with a new immutable version. Cross-workspace or unknown ids answer 404.",
+        "operationId": "unpublishForm",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "formId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "status": {
+                      "enum": [
+                        "closed",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "formId",
+                    "status",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The form is closed",
+          },
+          "401": {
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "description": "Email not verified, Origin mismatch, or no workspace yet (\`forbidden\`)",
+          },
+          "404": {
+            "description": "Unknown id or a form of another workspace (\`not_found\`)",
+          },
+        },
+        "summary": "Unpublish the form — it reads as closed to respondents",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "db": {
+                      "type": "boolean",
+                    },
+                    "status": {
+                      "enum": [
+                        "ok",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "status",
+                    "db",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Process is alive; \`db\` reports reachability",
+          },
+          "500": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Unexpected failure",
+          },
+        },
+        "summary": "Liveness and database reachability",
+        "tags": [
+          "operations",
+        ],
+      },
+    },
+    "/v1/openapi.json": {
+      "get": {
+        "operationId": "getOpenApiDocument",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OpenAPI 3.1 document",
+          },
+        },
+        "summary": "This document",
+        "tags": [
+          "operations",
+        ],
+      },
+    },
+    "/v1/public/forms/{slug}": {
+      "get": {
+        "description": "Wraps the security-definer \`get_published_form(slug)\` as app_user (cross-tenant by design; the slug registry is not directly readable). \`published\` → 200 with the immutable snapshot; \`closed\` (unpublished or soft-deleted) → 200 closed; \`redirect\` (superseded slug) → 308 Location /f/{canonicalSlug}; \`not_found\` → 404. Every response sends \`Cache-Control: no-store\`. Drafts are structurally unreachable. A future password gate sits in front of this endpoint.",
+        "operationId": "getPublicForm",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Za-z0-9]{10}$",
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "formId": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "schema": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "blocks": {
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "welcome",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "title": {
+                                        "type": "string",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "title",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/anyOf/0/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "short_text",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "label": {
+                                        "type": "string",
+                                      },
+                                      "placeholder": {
+                                        "type": "string",
+                                      },
+                                      "required": {
+                                        "type": "boolean",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "label",
+                                      "required",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/anyOf/0/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "long_text",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "label": {
+                                        "type": "string",
+                                      },
+                                      "placeholder": {
+                                        "type": "string",
+                                      },
+                                      "required": {
+                                        "type": "boolean",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "label",
+                                      "required",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "description": {
+                                        "type": "string",
+                                      },
+                                      "id": {
+                                        "$ref": "#/anyOf/0/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                      },
+                                      "kind": {
+                                        "enum": [
+                                          "ending",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "title": {
+                                        "type": "string",
+                                      },
+                                    },
+                                    "required": [
+                                      "id",
+                                      "kind",
+                                      "title",
+                                    ],
+                                    "type": "object",
+                                  },
+                                ],
+                              },
+                              "type": "array",
+                            },
+                            "logic": {
+                              "items": {
+                                "additionalProperties": {},
+                                "type": "object",
+                              },
+                              "type": "array",
+                            },
+                            "schemaVersion": {
+                              "enum": [
+                                1,
+                              ],
+                              "type": "number",
+                            },
+                            "settings": {
+                              "additionalProperties": {},
+                              "type": "object",
+                            },
+                            "theme": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "preset": {
+                                  "enum": [
+                                    "default",
+                                  ],
+                                  "type": "string",
+                                },
+                              },
+                              "required": [
+                                "preset",
+                              ],
+                              "type": "object",
+                            },
+                            "title": {
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "schemaVersion",
+                            "title",
+                            "blocks",
+                            "logic",
+                            "theme",
+                            "settings",
+                          ],
+                          "type": "object",
+                        },
+                        "status": {
+                          "enum": [
+                            "published",
+                          ],
+                          "type": "string",
+                        },
+                        "versionId": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "versionNumber": {
+                          "minimum": 1,
+                          "type": "integer",
+                        },
+                      },
+                      "required": [
+                        "status",
+                        "formId",
+                        "versionId",
+                        "versionNumber",
+                        "schema",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "closed",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "canonicalSlug": {
+                          "pattern": "^[A-Za-z0-9]{10}$",
+                          "type": "string",
+                        },
+                        "status": {
+                          "enum": [
+                            "redirect",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                        "canonicalSlug",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "not_found",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "status",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "Published snapshot or the closed state",
+          },
+          "308": {
+            "description": "Superseded slug — permanent redirect to /f/{canonicalSlug}",
+          },
+          "404": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Unknown slug (\`not_found\`)",
+          },
+        },
+        "summary": "Read the published form by public slug (UNauthenticated, cookie-less)",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/public/forms/{slug}/sessions": {
+      "post": {
+        "description": "Wraps the security-definer resolve_public_form(slug) — only published, non-deleted forms resolve (404 otherwise). Returns the RAW session token ONCE (only its SHA-256 hash is stored), the 24h expiry, the pinned published version id, and the pinned schema. Rate-limited to 30 requests per hour per trusted client IP AND per form (429 rate_limited). app.workspace_id is set from the resolved form, never from the client; a forged workspace header is ignored.",
+        "operationId": "createPublicSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Za-z0-9]{10}$",
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "expiresAt": {
+                      "type": "string",
+                    },
+                    "pinnedVersionId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "schema": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "blocks": {
+                          "items": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "description": {
+                                    "type": "string",
+                                  },
+                                  "id": {
+                                    "type": "string",
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "welcome",
+                                    ],
+                                    "type": "string",
+                                  },
+                                  "title": {
+                                    "type": "string",
+                                  },
+                                },
+                                "required": [
+                                  "id",
+                                  "kind",
+                                  "title",
+                                ],
+                                "type": "object",
+                              },
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "description": {
+                                    "type": "string",
+                                  },
+                                  "id": {
+                                    "$ref": "#/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "short_text",
+                                    ],
+                                    "type": "string",
+                                  },
+                                  "label": {
+                                    "type": "string",
+                                  },
+                                  "placeholder": {
+                                    "type": "string",
+                                  },
+                                  "required": {
+                                    "type": "boolean",
+                                  },
+                                },
+                                "required": [
+                                  "id",
+                                  "kind",
+                                  "label",
+                                  "required",
+                                ],
+                                "type": "object",
+                              },
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "description": {
+                                    "type": "string",
+                                  },
+                                  "id": {
+                                    "$ref": "#/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "long_text",
+                                    ],
+                                    "type": "string",
+                                  },
+                                  "label": {
+                                    "type": "string",
+                                  },
+                                  "placeholder": {
+                                    "type": "string",
+                                  },
+                                  "required": {
+                                    "type": "boolean",
+                                  },
+                                },
+                                "required": [
+                                  "id",
+                                  "kind",
+                                  "label",
+                                  "required",
+                                ],
+                                "type": "object",
+                              },
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "description": {
+                                    "type": "string",
+                                  },
+                                  "id": {
+                                    "$ref": "#/properties/schema/properties/blocks/items/anyOf/0/properties/id",
+                                  },
+                                  "kind": {
+                                    "enum": [
+                                      "ending",
+                                    ],
+                                    "type": "string",
+                                  },
+                                  "title": {
+                                    "type": "string",
+                                  },
+                                },
+                                "required": [
+                                  "id",
+                                  "kind",
+                                  "title",
+                                ],
+                                "type": "object",
+                              },
+                            ],
+                          },
+                          "type": "array",
+                        },
+                        "logic": {
+                          "items": {
+                            "additionalProperties": {},
+                            "type": "object",
+                          },
+                          "type": "array",
+                        },
+                        "schemaVersion": {
+                          "enum": [
+                            1,
+                          ],
+                          "type": "number",
+                        },
+                        "settings": {
+                          "additionalProperties": {},
+                          "type": "object",
+                        },
+                        "theme": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "preset": {
+                              "enum": [
+                                "default",
+                              ],
+                              "type": "string",
+                            },
+                          },
+                          "required": [
+                            "preset",
+                          ],
+                          "type": "object",
+                        },
+                        "title": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "schemaVersion",
+                        "title",
+                        "blocks",
+                        "logic",
+                        "theme",
+                        "settings",
+                      ],
+                      "type": "object",
+                    },
+                    "token": {
+                      "minLength": 16,
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "token",
+                    "expiresAt",
+                    "pinnedVersionId",
+                    "schema",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The pinned session (token returned once)",
+          },
+          "404": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Unknown slug, or the form is not currently published (\`not_found\`)",
+          },
+          "429": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Session-creation limit exhausted (\`rate_limited\`, Retry-After)",
+          },
+        },
+        "summary": "Create a pinned public session (UNauthenticated, cookie-less)",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/public/submissions": {
+      "post": {
+        "description": "ONE transaction per spec: resolve the session by the SHA-256 of the raw X-Form-Session token (resolve_form_session), reject unknown (404), expired-beyond-grace (410) or completed sessions, verify the form is still published and the pinned version exists (409 form_closed), validate the answers against the PINNED schema (422 with stable per-answer codes), lock the form row and enforce the per-form submission cap (409 form_full), insert the submission (UNIQUE form_session_id makes retries idempotent — the loser of a concurrent race gets the SAME receipt), mark the session completed, and write the submission.created audit row + outbox event. Stored answers are never returned. app.workspace_id always comes from the resolved session, never from the client.",
+        "operationId": "submitPublicForm",
+        "parameters": [
+          {
+            "description": "The raw session token from session creation.",
+            "in": "header",
+            "name": "X-Form-Session",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "answers": {
+                    "additionalProperties": {},
+                    "type": "object",
+                  },
+                },
+                "required": [
+                  "answers",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "submissionId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "submitted": {
+                      "enum": [
+                        true,
+                      ],
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "submitted",
+                    "submissionId",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "The idempotent receipt (first submit or a retry/race loser)",
+          },
+          "401": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Missing X-Form-Session header (\`session_required\`)",
+          },
+          "404": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Unknown session token (\`session_not_found\`)",
+          },
+          "409": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Form closed or deleted (\`form_closed\`), per-form submission cap reached (\`form_full\`), or a completed session without a stored submission (\`session_completed\`)",
+          },
+          "410": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Session expired beyond the 5-minute grace window (\`session_expired\`)",
+          },
+          "413": {
+            "description": "Body exceeds the route's configured 150 KB JSON limit",
+          },
+          "422": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Answer validation against the pinned schema failed (\`validation_failed\` with per-answer codes: \`unknown_block_id\`, \`answer_to_non_question\`, \`required_answer_missing\`, \`answer_too_long\`, \`invalid_character\`, \`submission_too_large\`, \`invalid_answer_type\`)",
+          },
+          "429": {
+            "description": "Session-creation limit exhausted on the paired session route (\`rate_limited\`)",
+          },
+        },
+        "summary": "Submit answers for a public session (UNauthenticated, cookie-less)",
+        "tags": [
+          "forms",
+        ],
+      },
+    },
+    "/v1/workspaces/bootstrap": {
+      "post": {
+        "description": "Requires a verified-email session (401 unauthenticated, 403 email_unverified otherwise) and a same-origin Origin header (mutation). Calls create_personal_workspace(); repeated calls return the existing workspace without duplicates.",
+        "operationId": "bootstrapWorkspace",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "workspace": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "name": {
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "role": {
+                          "enum": [
+                            "owner",
+                            "admin",
+                            "editor",
+                            "viewer",
+                          ],
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "role",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                  "required": [
+                    "workspace",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Existing or newly created personal workspace",
+          },
+          "401": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Absent, invalid, expired, or revoked session",
+          },
+          "403": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Email not verified (\`email_unverified\`) or Origin mismatch (\`origin_mismatch\`)",
+          },
+          "429": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                    },
+                    "detail": {
+                      "type": "string",
+                    },
+                    "errors": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                          },
+                          "message": {
+                            "type": "string",
+                          },
+                          "path": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "path",
+                          "code",
+                          "message",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "status": {
+                      "type": "integer",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                    "type": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "code",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Rate limit exceeded (\`rate_limited\`)",
+          },
+        },
+        "summary": "Idempotent personal-workspace bootstrap",
+        "tags": [
+          "workspaces",
+        ],
+      },
+    },
+  },
+  "servers": [
+    {
+      "url": "/v1",
+    },
+  ],
+  "tags": [
+    {
+      "description": "Health and OpenAPI",
+      "name": "operations",
+    },
+    {
+      "description": "Workspace bootstrap and tenant-scoped resources",
+      "name": "workspaces",
+    },
+    {
+      "description": "Form create/list/read/rename and draft save in the active workspace",
+      "name": "forms",
+    },
+  ],
+}
+`;
