@@ -357,30 +357,6 @@ async function dev() {
     process.exit(pgbossInstall.status ?? 1);
   }
 
-  // 3.6 Better Auth DDL for the `auth` schema + app_user grants (dev/e2e
-  //     companion of the api test fixture; production: a migrator step —
-  //     see the ticket-12 runbook pending-user checklist).
-  const authSchema = spawnSync(
-    "pnpm",
-    ["--filter", "@form/api", "exec", "tsx", "src/scripts/ensure-auth-schema.ts"],
-    {
-      cwd: ROOT,
-      env: {
-        ...process.env,
-        ADMIN_DATABASE_URL: d.adminDatabaseUrl,
-        APP_DATABASE_URL: d.appDatabaseUrl,
-      },
-      stdio: ["ignore", "pipe", "pipe"],
-      encoding: "utf8",
-    },
-  );
-  if (authSchema.status !== 0) {
-    process.stderr.write(
-      `[auth-schema] failed (exit ${authSchema.status})\n${authSchema.stderr ?? ""}\n`,
-    );
-    process.exit(authSchema.status ?? 1);
-  }
-
   // 4. Dev SMTP sink (Mailpit substitute).
   spawnChild("mail", process.execPath, [path.join(ROOT, "scripts/mail-sink.mjs")], ROOT, {
     ...buildChildEnv("sink", process.env),
