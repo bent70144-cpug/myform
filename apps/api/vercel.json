@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm -w build && pnpm exec esbuild serverless/adapter.ts --bundle --platform=node --format=cjs --target=node20 --outfile=api/main.js --external:@nestjs/microservices --external:@nestjs/microservices/microservices-module.js --external:@nestjs/websockets --external:@nestjs/websockets/socket-module.js --log-limit=0",
+  "rewrites": [
+    {
+      "source": "/v1/:path*",
+      "destination": "/api/main"
+    }
+  ],
+  "outputDirectory": "public"
+}

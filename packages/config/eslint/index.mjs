@@ -44,6 +44,8 @@ export function baseConfig() {
         "**/coverage/**",
         "**/.turbo/**",
         "**/.fixture/**",
+        // generated vercel serverless bundle (apps/api vercel.json buildCommand)
+        "apps/api/api/**",
       ],
     },
     ...tseslint.configs.recommended,
