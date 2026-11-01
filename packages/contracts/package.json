@@ -1,0 +1,27 @@
+{
+  "name": "@myform/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zod request/response schemas, Problem Details (RFC 9457) helpers, and OpenAPI generation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "4.6.7",
+    "zod-openapi": "6.0.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@myform/config": "workspace:*",
+    "@types/node": "26.6.6",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}
