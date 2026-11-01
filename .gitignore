@@ -19,3 +19,6 @@ packages/*/src/**/*.d.ts
 packages/*/src/**/*.d.ts.map
 apps/*/src/**/*.js.map
 test-results/
+
+# local scratch worktrees (never part of the build)
+wt/
