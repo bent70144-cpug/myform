@@ -38,6 +38,12 @@ export function buildRewrites(
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   async rewrites() {
+    // On Vercel, edge rewrites whose destination is another *.vercel.app
+    // project are blocked by the platform's SSRF loop-guard
+    // (DNS_HOSTNAME_RESOLVED_PRIVATE). There the Node-runtime proxy route
+    // (src/app/v1/[...path]/route.ts) serves /v1/* instead. Local dev and
+    // Render keep the rewrite (VERCEL is set in every Vercel build).
+    if (process.env.VERCEL === "1") return [];
     return buildRewrites();
   },
 };

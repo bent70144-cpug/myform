@@ -4,5 +4,5 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src", "test", "vitest.config.ts"]
+  "include": ["src", "test", "serverless", "vitest.config.ts"]
 }

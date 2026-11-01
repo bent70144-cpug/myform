@@ -32,6 +32,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The e2e suite runs Playwright against the full supervisor stack; the
+      # runner has no browsers preinstalled (a fresh runner otherwise fails
+      # with "Executable doesn't exist ... chrome-headless-shell").
+      - name: Install Playwright chromium
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: e2e
+
       - name: Lint
         run: pnpm -w lint
 

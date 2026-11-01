@@ -60,6 +60,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The migrate CLI imports @form/config, which resolves to its built dist
+      # on the runner — build the workspace first (a fresh runner has no dist).
+      - name: Build workspace packages
+        run: pnpm build
+
       # The migrator URL exists ONLY here (GitHub secret) — it never appears in
       # Render's runtime environment.
       - name: Apply migrations as the migrator

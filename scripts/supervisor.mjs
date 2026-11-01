@@ -8,6 +8,9 @@
  *            children (see below).
  *   --serve  production children only (web/api/worker, built artifacts) — the
  *            Render alpha start command; same allowlists, no local infra.
+ *            `--serve --no-web` spawns api + worker only (api binds the
+ *            public $PORT) for topologies where the web tier is hosted
+ *            elsewhere (e.g. Vercel) and Render is the API/worker host.
  *
  * Starts web (Next.js), API (NestJS), the worker and (in dev) the dev SMTP
  * sink with an EXPLICIT allowlisted environment per child process:
@@ -417,10 +420,12 @@ async function dev() {
  * dropped by the allowlists): DATABASE_URL (pooled app_user), the migrator
  * URL is FORBIDDEN here (GitHub Actions secret only).
  */
-async function serve() {
+async function serve(noWeb = false) {
   const env = process.env;
   const webPort = env.PORT ?? env.WEB_PORT ?? "3000";
-  const apiPort = env.API_PORT ?? "4000";
+  // --no-web: there is no web child, so the API itself takes the platform's
+  // public $PORT (Render health checks hit /v1/health directly).
+  const apiPort = env.API_PORT ?? (noWeb ? env.PORT ?? "4000" : "4000");
   const d = devDefaults({ ...env, WEB_PORT: webPort, API_PORT: apiPort });
 
   const missing = [
@@ -438,7 +443,9 @@ async function serve() {
   }
 
   process.stdout.write(
-    `[supervisor] serving: web :${webPort} → api 127.0.0.1:${apiPort} (same allowlists as dev)\n`,
+    noWeb
+      ? `[supervisor] serving: api 0.0.0.0:${apiPort} + worker (no web child)\n`
+      : `[supervisor] serving: web :${webPort} → api 127.0.0.1:${apiPort} (same allowlists as dev)\n`,
   );
 
   spawnChild("api", "pnpm", ["--filter", "@form/api", "start"], ROOT, {
@@ -461,6 +468,12 @@ async function serve() {
       LOG_LEVEL: env.LOG_LEVEL ?? "info",
     }),
   });
+
+  if (noWeb) {
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+    return;
+  }
 
   spawnChild("web", "pnpm", ["--filter", "@form/web", "start"], ROOT, {
     ...buildChildEnv("web", {
@@ -486,7 +499,7 @@ if (isMain && process.argv.includes("--dev")) {
     process.exit(1);
   });
 } else if (isMain && process.argv.includes("--serve")) {
-  serve().catch((err) => {
+  serve(process.argv.includes("--no-web")).catch((err) => {
     process.stderr.write(`[supervisor] ${err?.stack ?? err}\n`);
     process.exit(1);
   });
