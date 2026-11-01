@@ -1,0 +1,4 @@
+{
+  "extends": "@myform/config/tsconfig/package.json",
+  "include": ["src", "test", "vitest.config.ts"]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@myform/auth",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Auth package boundary: client entry (types + typed session client) and server entry (DB-backed instance). No product auth in ticket 01.",
+  "main": "dist/client/index.js",
+  "types": "dist/client/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@myform/config": "workspace:*",
+    "@types/node": "26.6.6",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}

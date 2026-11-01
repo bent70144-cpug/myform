@@ -21,13 +21,18 @@ export type EnvSource = Record<string, string | undefined>;
  * Throws {@link EnvValidationError} listing every problem — never a partial
  * config. Values must already be strings, as real environments are.
  */
-export function loadEnv<S extends z.ZodType<unknown, EnvSource>>(
+export function loadEnv<S extends z.ZodType>(
   schema: S,
   source: EnvSource = process.env as EnvSource,
 ): z.output<S> {
-  const result = schema.safeParse(source);
+  const result = schema.safeParse(source as z.input<S>);
   if (!result.success) {
-    throw new EnvValidationError(z.prettifyError(result.error).split("\n").filter(Boolean));
+    throw new EnvValidationError(
+      z.prettifyError(result.error)
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean),
+    );
   }
   return result.data as z.output<S>;
 }
