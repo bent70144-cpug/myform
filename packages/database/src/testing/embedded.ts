@@ -108,12 +108,33 @@ export async function ensureEmbeddedPostgres(): Promise<EmbeddedPgHandle> {
       await handle.initialise();
     }
     await handle.start();
-    for (const db of [EMBEDDED_PG.devDatabase, EMBEDDED_PG.testDatabase]) {
-      try {
-        await handle.createDatabase(db);
-      } catch {
-        // already exists from a previous run — fine
+    // Create the dev/test databases with OUR OWN admin client that is ALWAYS
+    // ended. WHY: EmbeddedPostgres#createDatabase ends its internal client
+    // only on success — when CREATE DATABASE throws (e.g. 42P04 "already
+    // exists" on the persistent data dir), that client leaks and stays
+    // connected until the cluster shuts down, where it dies with 57P01 and
+    // lands as an 'error' event during teardown (same race class as
+    // terminateClientBackends below).
+    const dbCreator = new Client({
+      host: EMBEDDED_PG.host,
+      port: EMBEDDED_PG.port,
+      user: EMBEDDED_PG.user,
+      password: EMBEDDED_PG.password,
+      database: EMBEDDED_PG.adminDatabase,
+      connectionTimeoutMillis: 5_000,
+    });
+    dbCreator.on("error", () => undefined);
+    try {
+      await dbCreator.connect();
+      for (const db of [EMBEDDED_PG.devDatabase, EMBEDDED_PG.testDatabase]) {
+        // No IF NOT EXISTS for CREATE DATABASE — tolerate 42P04 (already
+        // exists from a previous run on the persistent data dir).
+        await dbCreator
+          .query(`CREATE DATABASE "${db.replace(/"/g, "")}"`)
+          .catch(() => undefined);
       }
+    } finally {
+      await dbCreator.end().catch(() => undefined);
     }
     fs.writeFileSync(PID_FILE, String(process.pid));
     return { started: true, port: EMBEDDED_PG.port };
@@ -123,8 +144,61 @@ export async function ensureEmbeddedPostgres(): Promise<EmbeddedPgHandle> {
   }
 }
 
+/**
+ * Terminate every remaining client backend before the cluster shuts down.
+ *
+ * WHY: embedded-postgres `stop()` performs a FAST shutdown. If pooled or
+ * pg-boss connections are still alive at that moment, Postgres kills them
+ * with 57P01 "terminating connection" and, depending on socket-close timing,
+ * clients can instead see a raw ECONNRESET — either way the error lands as an
+ * unhandled `'error'` event AFTER all tests have passed, failing the run
+ * (observed as intermittent `@form/database#test` failures under turbo).
+ * Terminating backends explicitly, then waiting briefly, delivers a clean
+ * protocol-level error while the cluster is still fully up, so pools already
+ * end their sockets deterministically before `pg_ctl stop -m fast` runs.
+ *
+ * Safe to terminate cluster-wide: only the process that STARTED the cluster
+ * ever calls this (reuse-aware `ensureEmbeddedPostgres` returns `started:
+ * false` otherwise), and the root test pipeline runs packages serially.
+ */
+async function terminateClientBackends(): Promise<void> {
+  const terminator = new Client({
+    host: EMBEDDED_PG.host,
+    port: EMBEDDED_PG.port,
+    user: EMBEDDED_PG.user,
+    password: EMBEDDED_PG.password,
+    database: EMBEDDED_PG.adminDatabase,
+    connectionTimeoutMillis: 2_000,
+  });
+  // The terminator must never crash the run itself: if the cluster is already
+  // going away, connect/query failures say nothing about the stop outcome.
+  terminator.on("error", () => undefined);
+  try {
+    await terminator.connect();
+    // Covers form_test, form_dev AND the per-suite scratch databases
+    // (t01_*, t05_outbox_queue, …) that hold pg-boss connections.
+    await terminator.query(`
+      SELECT pg_terminate_backend(pid)
+      FROM pg_stat_activity
+      WHERE datname IS NOT NULL
+        AND datname NOT IN ('template0', 'template1')
+        AND backend_type = 'client backend'
+        AND pid <> pg_backend_pid()
+    `);
+  } catch {
+    // Best effort — fall through to the regular stop().
+  } finally {
+    await terminator.end().catch(() => undefined);
+  }
+}
+
 export async function stopEmbeddedPostgres(): Promise<void> {
   if (handle) {
+    // Teardown-race hardening: see terminateClientBackends — terminate
+    // stragglers FIRST, give their clients ~50ms to observe the clean
+    // 57P01 disconnect, and only then fast-shutdown the cluster.
+    await terminateClientBackends();
+    await new Promise((resolve) => setTimeout(resolve, 50));
     await handle.stop();
     handle = null;
     fs.rmSync(PID_FILE, { force: true });

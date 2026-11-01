@@ -9,6 +9,7 @@ import {
   withTenant,
   withWorkspaceContext,
 } from "./helpers";
+import { ensureBootstrapped } from "../src/testing";
 
 /**
  * Security-definer function suite (tickets 05/06/09/10 DB slice):
@@ -94,6 +95,9 @@ async function seedForm(
 }
 
 beforeAll(async () => {
+  // Self-sufficient regardless of file order on a fresh cluster (roles may
+  // not exist yet when this big file runs first).
+  await ensureBootstrapped();
   USER_A = newId();
   USER_B = newId();
   WS_A = await bootstrapPersonalWorkspace(USER_A);

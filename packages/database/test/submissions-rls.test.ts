@@ -6,6 +6,7 @@ import {
   withTenant,
   RUN,
 } from "./helpers";
+import { ensureBootstrapped } from "../src/testing";
 
 /**
  * Ticket 11 — the RLS SEAM for the submission tables (spec "Testing
@@ -83,6 +84,9 @@ async function seedSubmission(): Promise<void> {
 }
 
 beforeAll(async () => {
+  // Self-sufficient regardless of file order on a fresh cluster (roles may
+  // not exist yet when this big file runs first).
+  await ensureBootstrapped();
   USER_A = newId();
   USER_B = newId();
   WS_A = await bootstrapPersonalWorkspace(USER_A);
