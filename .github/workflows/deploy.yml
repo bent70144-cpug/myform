@@ -14,11 +14,15 @@
 #   MIGRATOR_DATABASE_URL   direct Neon URL for the `migrator` role
 #                           (Neon: pooled URL with ?pgbouncer=true is NOT used
 #                           here — migrations and pg-boss use the DIRECT URL)
-#   RENDER_DEPLOY_HOOK_URL  the deploy hook URL from the Render service
+#   RENDER_API_KEY          Render API key (workspace: Ben's workspace)
+#   RENDER_SERVICE_ID       id of the myform-api Render service (srv-…);
+#                           the deploy hook URL cannot be created via API, so
+#                           deploys are triggered through POST /v1/services/
+#                           {id}/deploys with the API key instead
 #
 # Jobs:
 #   migrate      (main only)      apply migrations as the `migrator` role
-#   deploy       (main only)      trigger the Render deploy hook AFTER migrate
+#   deploy       (main only)      trigger a Render deploy AFTER migrate
 #   smoke-local  (main + integration/m0)  the LOCAL alpha smoke on a fresh
 #                runner: embedded Postgres + supervisor + the full
 #                health → signup → verify → workspace → form → draft →
@@ -73,19 +77,30 @@ jobs:
           MIGRATOR_DATABASE_URL: ${{ secrets.MIGRATOR_DATABASE_URL }}
 
   deploy:
-    name: Trigger Render deploy hook
+    name: Trigger Render deploy (API)
     if: github.ref == 'refs/heads/main'
     needs: migrate
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render deploy
-        run: |
-          curl -fsS -X POST \
-            -H "Accept: application/json" \
-            "$RENDER_DEPLOY_HOOK_URL" > /dev/null
-          echo "Render deploy triggered after successful migrations."
         env:
-          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          if [ -z "$RENDER_SERVICE_ID" ]; then
+            echo "RENDER_SERVICE_ID is not set — the Render service does not
+            exist yet (workspace billing). Migrations ran; skipping the deploy
+            trigger. Set the service id secret once the service is created."
+            exit 0
+          fi
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            -d '{"clearCache":"do_not_clear"}' \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys"
+          echo
+          echo "Render deploy triggered after successful migrations."
 
       # The live RENDER smoke stays MANUAL (needs real email + the deployed
       # origin): follow docs/RUNBOOK-deploy.md "Live smoke checklist" after the
