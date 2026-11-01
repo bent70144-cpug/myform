@@ -10,6 +10,7 @@
  * - `runMigrations` — plain-SQL migration runner (migrator role).
  * - `bootstrapDatabase` — one-time admin bootstrap (schemas + roles).
  * - `uuidv7` — app-side time-sortable IDs.
+ * - `purgeExpiredSessions` — the worker's session-purge call (ticket 10).
  * - `TENANT_TABLES` / `isTenantQuery` — the tenant query guard's source list.
  */
 export {
@@ -36,6 +37,7 @@ export {
   type BootstrapSummary,
 } from "./bootstrap";
 export { uuidv7, isUuid } from "./uuid";
+export { purgeExpiredSessions } from "./purge";
 export { TENANT_TABLES, isTenantQuery, type TenantTable } from "./tenant-tables";
 export {
   runCatalogGuard,

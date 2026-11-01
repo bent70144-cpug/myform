@@ -22,8 +22,13 @@ import {
   FORM_CREATED_EVENT,
   createFormCreatedHandler,
 } from "./handlers/form-created";
+import {
+  SESSION_PURGE_JOB,
+  createSessionPurgeHandler,
+} from "./handlers/session-purge";
 
 export { installPgBossSchema };
+export { SESSION_PURGE_JOB } from "./handlers/session-purge";
 
 /**
  * Worker process (ticket 02 spike + ticket 05 dispatcher slice).
@@ -41,7 +46,11 @@ export { installPgBossSchema };
  *   dispatch reuses exactly this mechanism (ticket 05): both tick at
  *   HEARTBEAT_INTERVAL_MS (default 30s) — the chosen compromise between Neon
  *   suspend-awake churn and dispatch latency.
- * - Both queues are created with the `singleton` policy so a slow tick never
+ * - Ticket 10 adds the third recurring schedule on the same mechanism:
+ *   `session.purge` (hourly) deletes sessions expired for more than seven
+ *   days via app.purge_expired_sessions() — SECURITY DEFINER, granted ONLY
+ *   to worker_user.
+ * - All queues are created with the `singleton` policy so a slow tick never
  *   stacks with the next one.
  *
  * Runtime environment: WORKER_DATABASE_URL (+ LOG_LEVEL,
@@ -67,12 +76,21 @@ export interface WorkerOptions {
   /** Outbox handlers keyed by event_type (default: workspace.created +
    *  form.created loggers). */
   outboxHandlers?: Record<string, OutboxHandler>;
+  /** Session-purge cadence in milliseconds (default 3_600_000 — hourly
+   *  sweeps of the expired-for-7-days window; ticket 10). */
+  sessionPurgeIntervalMs?: number;
+  /** Test seam: override the purge DB call (default: the @form/database
+   *  helper over the worker's own worker_user pool). */
+  sessionPurge?: (pool: ReturnType<typeof createPool>) => Promise<number>;
   /** Test hook: receive every heartbeat log line. */
   onHeartbeat?: (line: Record<string, unknown>) => void;
 }
 
 export const DEFAULT_HEARTBEAT_INTERVAL_MS = 30_000;
 export const DEFAULT_DISPATCH_INTERVAL_MS = 30_000;
+/** Session purge cadence (ticket 10): hourly is ample for a 7-day expiry
+ *  window — expired-for-7-days rows only ever age, never escape the sweep. */
+export const DEFAULT_SESSION_PURGE_INTERVAL_MS = 3_600_000;
 export const HEARTBEAT_JOB = "heartbeat";
 export const OUTBOX_DISPATCH_JOB = "outbox.dispatch";
 
@@ -101,6 +119,8 @@ export async function startWorker(options: WorkerOptions): Promise<StartedWorker
     options.heartbeatIntervalMs ?? DEFAULT_HEARTBEAT_INTERVAL_MS;
   const dispatchIntervalMs =
     options.dispatchIntervalMs ?? DEFAULT_DISPATCH_INTERVAL_MS;
+  const sessionPurgeIntervalMs =
+    options.sessionPurgeIntervalMs ?? DEFAULT_SESSION_PURGE_INTERVAL_MS;
   const logger: OutboxLogger =
     options.logger ??
     createLogger({
@@ -153,6 +173,20 @@ export async function startWorker(options: WorkerOptions): Promise<StartedWorker
     await dispatcher.dispatchOnce();
   });
 
+  // Ticket 10: the recurring session purge reuses the exact mechanism of the
+  // heartbeat and outbox-dispatch schedules above (recurring pg-boss job,
+  // singleton policy, graceful stop via queue.stop()). The handler runs the
+  // SECURITY-DEFINER app.purge_expired_sessions() through the same pool —
+  // worker_user is the only role granted EXECUTE.
+  queue.registerHandler(
+    SESSION_PURGE_JOB,
+    createSessionPurgeHandler({
+      pool,
+      logger,
+      purge: options.sessionPurge,
+    }),
+  );
+
   await queue.start();
 
   await queue.schedule(
@@ -163,6 +197,9 @@ export async function startWorker(options: WorkerOptions): Promise<StartedWorker
   await queue.schedule(OUTBOX_DISPATCH_JOB, {
     cron: heartbeatCron(dispatchIntervalMs),
   });
+  await queue.schedule(SESSION_PURGE_JOB, {
+    cron: heartbeatCron(sessionPurgeIntervalMs),
+  });
 
   process.stdout.write(
     JSON.stringify({
@@ -171,6 +208,8 @@ export async function startWorker(options: WorkerOptions): Promise<StartedWorker
       heartbeatCron: heartbeatCron(heartbeatIntervalMs),
       dispatchIntervalMs,
       dispatchCron: heartbeatCron(dispatchIntervalMs),
+      sessionPurgeIntervalMs,
+      sessionPurgeCron: heartbeatCron(sessionPurgeIntervalMs),
     }) + "\n",
   );
 
@@ -205,6 +244,7 @@ if (isMain) {
       // HEARTBEAT_INTERVAL_MS drives BOTH cadences (ADR-0003/0005).
       heartbeatIntervalMs: env.HEARTBEAT_INTERVAL_MS,
       dispatchIntervalMs: env.HEARTBEAT_INTERVAL_MS,
+      // session.purge keeps its hourly default (ticket 10) — no env knob.
       logLevel: env.LOG_LEVEL,
     });
     const shutdown = async () => {

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Client } from "pg";
-import { createPool, uuidv7 } from "@form/database";
+import { createPool, purgeExpiredSessions, uuidv7 } from "@form/database";
 import {
   createScratchDatabase,
   dropDatabase,
@@ -10,8 +10,11 @@ import {
 } from "@form/database/testing";
 import {
   DEFAULT_DISPATCH_INTERVAL_MS,
-  installPgBossSchema,
+  DEFAULT_SESSION_PURGE_INTERVAL_MS,
   OUTBOX_DISPATCH_JOB,
+  SESSION_PURGE_JOB,
+  heartbeatCron,
+  installPgBossSchema,
   startWorker,
 } from "../src/index";
 import { FORM_CREATED_EVENT } from "../src/handlers/form-created";
@@ -23,6 +26,10 @@ import { grantPgBossRuntimeRole } from "@form/queue";
  * (inserted by app_user WITHOUT RETURNING) and the default handler logs the
  * structured event. Heartbeat stays wired through the same pg-boss instance
  * (ticket 02, covered in heartbeat.test.ts).
+ *
+ * Ticket 10 adds the third recurring schedule on the same mechanism:
+ * `session.purge` runs the SECURITY-DEFINER app.purge_expired_sessions()
+ * (granted ONLY to worker_user) through the worker pool.
  */
 
 const SCRATCH_DB = "t05_worker_outbox";
@@ -214,6 +221,77 @@ describe("worker: outbox dispatcher slice", () => {
       await worker.queue.enqueue(OUTBOX_DISPATCH_JOB, {});
       await new Promise((r) => setTimeout(r, 2_500));
       expect(handlerCalls).toEqual([id]);
+    } finally {
+      await worker.stop();
+    }
+  }, 25_000);
+
+  it("defaults the session-purge cadence to hourly (ticket 10)", () => {
+    expect(DEFAULT_SESSION_PURGE_INTERVAL_MS).toBe(3_600_000);
+    // 3600s is not a divisor of 60 → the RRULE form (same mechanism as the
+    // heartbeat/dispatch cadences, docs/adr/0003 + 0005).
+    expect(heartbeatCron(DEFAULT_SESSION_PURGE_INTERVAL_MS)).toBe(
+      "FREQ=SECONDLY;INTERVAL=3600",
+    );
+  });
+
+  it("schedules session.purge and the handler runs the real purge helper (ticket 10)", async () => {
+    const purgeCalls: number[] = [];
+    const worker = await startWorker({
+      databaseUrl: urls.workerUrl,
+      heartbeatIntervalMs: 30_000, // not asserted here
+      dispatchIntervalMs: 30_000, // not asserted here
+      sessionPurgeIntervalMs: 1_000, // fast cadence for the test window
+      sessionPurge: async (pool) => {
+        // Seam wraps the REAL @form/database helper: the SECURITY DEFINER
+        // function actually runs as worker_user (proves the grant too).
+        const deleted = await purgeExpiredSessions(pool);
+        purgeCalls.push(deleted);
+        return deleted;
+      },
+      logger: silentLogger,
+    });
+
+    try {
+      // First fire of a NEW schedule lands within ~interval + 10s
+      // (cronMonitorIntervalSeconds: 5 — spike finding, see heartbeat.test.ts).
+      const deadline = Date.now() + 20_000;
+      while (purgeCalls.length === 0 && Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, 200));
+      }
+      expect(purgeCalls.length).toBeGreaterThanOrEqual(1);
+      expect(purgeCalls[0]).toBeTypeOf("number");
+    } finally {
+      await worker.stop();
+    }
+  }, 30_000);
+
+  it("processes an enqueued session.purge job through the default handler and logs the purge event", async () => {
+    const logLines: Array<Record<string, unknown>> = [];
+    const worker = await startWorker({
+      databaseUrl: urls.workerUrl,
+      heartbeatIntervalMs: 30_000,
+      dispatchIntervalMs: 30_000,
+      logger: {
+        ...silentLogger,
+        info: (line) => logLines.push(line),
+      },
+    });
+
+    try {
+      // Low-latency path (ADR 0005): enqueue the job directly instead of
+      // waiting on the hourly safety-net schedule.
+      await worker.queue.enqueue(SESSION_PURGE_JOB, {});
+      const deadline = Date.now() + 15_000;
+      while (
+        Date.now() < deadline &&
+        !logLines.some((l) => l["event"] === "worker.session_purge")
+      ) {
+        await new Promise((r) => setTimeout(r, 200));
+      }
+      const line = logLines.find((l) => l["event"] === "worker.session_purge");
+      expect(line).toBeDefined();
+      expect(line!["deleted"]).toBeTypeOf("number");
     } finally {
       await worker.stop();
     }
