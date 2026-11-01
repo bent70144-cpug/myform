@@ -118,6 +118,7 @@ export function btn(
     cursor: "pointer",
     lineHeight: 1.3,
     boxSizing: "border-box",
+    textDecoration: "none",
   };
   if (opts.block) base.width = "100%";
   switch (variant) {
