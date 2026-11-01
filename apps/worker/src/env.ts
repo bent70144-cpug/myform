@@ -1,6 +1,11 @@
-import type { WorkerEnv } from "@myform/config";
-import { loadEnv, workerEnvSchema, type EnvSource } from "@myform/config";
+import {
+  loadEnv,
+  pickWorkerEnv,
+  workerEnvSchema,
+  type EnvSource,
+  type WorkerEnv,
+} from "@myform/config";
 
 export function readWorkerEnv(source: EnvSource = process.env as EnvSource): WorkerEnv {
-  return loadEnv(workerEnvSchema, source);
+  return loadEnv(workerEnvSchema, pickWorkerEnv(source));
 }
