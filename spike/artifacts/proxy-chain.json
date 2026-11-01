@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-11-01T15:06:57.782Z",
+  "viaNextRewrite": {
+    "seenBy": "nestjs",
+    "peer": {
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54932,
+      "ip": "127.0.0.1",
+      "trustProxy": false
+    },
+    "headers": {
+      "host": "127.0.0.1:38809",
+      "x-forwarded-host": "127.0.0.1:44001",
+      "connection": "keep-alive",
+      "user-agent": "node"
+    },
+    "httpVersion": "1.1",
+    "mountedAt": "2026-11-01T15:06:57.778Z"
+  },
+  "directToApi": {
+    "seenBy": "nestjs",
+    "peer": {
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 54946,
+      "ip": "127.0.0.1",
+      "trustProxy": false
+    },
+    "headers": {
+      "host": "127.0.0.1:38809",
+      "connection": "keep-alive",
+      "user-agent": "node"
+    },
+    "httpVersion": "1.1",
+    "mountedAt": "2026-11-01T15:06:57.781Z"
+  },
+  "notes": [
+    "Client: Node fetch on 127.0.0.1 → Next.js (public port) → rewrite → NestJS (internal port).",
+    "Express `trust proxy` is NOT set in the spike API, so peer.ip is the raw socket address.",
+    "FINDING: the Next 16 rewrite sets only x-forwarded-host; x-forwarded-for and x-forwarded-proto are ABSENT on the internal hop.",
+    "TICKET 04: the client IP must come from the edge-provided x-forwarded-for that Next itself received (Render/Cloudflare hop), forwarded explicitly; the internal peer is always 127.0.0.1."
+  ]
+}

@@ -102,6 +102,19 @@ CREATE POLICY spike_docs_fn_owner ON app.spike_docs
 --> statement-breakpoint
 GRANT SELECT, INSERT, UPDATE, DELETE ON app.spike_docs TO app_user;
 --> statement-breakpoint
+-- SPIKE FINDING (see spike/DECISIONS.md): two grants are required before
+-- fn_owner-owned security-definer functions can be installed, and the
+-- ticket-01 bootstrap does not include either:
+--   1. USAGE  — Postgres validates a plpgsql SECURITY DEFINER function
+--      body as the function's OWNER (fn_owner); without USAGE on `app`
+--      `CREATE FUNCTION ... AS $$...$$` fails with "permission denied for
+--      schema app" even though migrator owns the schema.
+--   2. CREATE — `ALTER FUNCTION ... OWNER TO fn_owner` requires the NEW
+--      owner to have CREATE on the function's schema.
+-- Neither grant weakens tenancy: fn_owner stays NOLOGIN and NOBYPASSRLS,
+-- and every table access is still governed by its RLS policies.
+GRANT USAGE, CREATE ON SCHEMA app TO fn_owner;
+--> statement-breakpoint
 -- Security-definer write path (the create_personal_workspace() pattern):
 -- reads no caller-supplied tenant privilege, sets its own function-scoped
 -- context, inserts under the fn_owner policy.
