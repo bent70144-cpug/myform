@@ -48,7 +48,7 @@ async function roleExists(client: SqlClient, name: string): Promise<boolean> {
 }
 
 async function ensureLoginRole(
-  client: PoolClient,
+  client: SqlClient,
   name: string,
   password: string,
 ): Promise<void> {
