@@ -17,13 +17,22 @@ export const dynamic = "force-dynamic";
  */
 type Verb = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-function dispatch(verb: Verb): (request: Request) => Promise<Response> {
-  return async (request) => {
-    const handler = neonAuth().handler() as Record<
-      Verb,
-      (r: Request) => Promise<Response>
-    >;
-    return handler[verb](request);
+/** Next 15+/16 route-handler context: params arrive as a Promise. */
+type RouteContext = { params: Promise<{ path: string[] }> };
+
+type SdkHandler = (
+  request: Request,
+  context: RouteContext,
+) => Promise<Response>;
+
+function dispatch(verb: Verb): (request: Request, context: RouteContext) => Promise<Response> {
+  return async (request, context) => {
+    // The managed SDK's handler destructures `{ params }` from its SECOND
+    // argument (it awaits `params.path` to build the proxied auth path), so
+    // the Next context must be forwarded as-is — dropping it is a guaranteed
+    // 500 ("Cannot destructure property 'params' of 'undefined'").
+    const handler = neonAuth().handler()[verb] as SdkHandler;
+    return handler(request, context);
   };
 }
 
